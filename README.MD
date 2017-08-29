@@ -1,0 +1,1 @@
+Blog for musings while plugged in
