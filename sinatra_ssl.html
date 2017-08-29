@@ -33,7 +33,7 @@ pre {overflow-wrap: break-word;}
 Mon 28 Aug 2017<br>
 Reading time: (15 mins)
 </p>
-<p>So you made your first Sinatra app and you go it live on your personal server. You followed the <a href="http://recipes.sinatrarb.com/p/deployment/lighttpd_proxied_to_thin">simple steps here</a> to get a sweet reverse proxy going with Lighttpd and Thin and everything is right in the universe. Then you hear some unsettling news...Google is slowly ramping it's <a href="https://security.googleblog.com/2016/09/moving-towards-more-secure-web.html">hunt for non HTTPS pages</a>. Time to get cracking.</p>
+<p>So you made your first Sinatra app and you got it live on your server. You followed the <a href="http://recipes.sinatrarb.com/p/deployment/lighttpd_proxied_to_thin">simple steps here</a> to get a sweet reverse proxy going with Lighttpd and Thin and everything is right in the universe. Then you hear some unsettling news...Google is slowly ramping it's <a href="https://security.googleblog.com/2016/09/moving-towards-more-secure-web.html">hunt for non-HTTPS pages</a>. Time to get cracking.</p>
 <p>Let's pretend this is our awesome app:</p>
 <pre class="prettyprint linenums">
 require 'sinatra'
@@ -63,7 +63,7 @@ end
 cd /etc/letsencrypt/live/mydomain
 </pre>
 <pre class="unix">
-$ cat privkey.pem cert.pem > ssl.pem
+cat privkey.pem cert.pem > ssl.pem
 </pre>
 <p>Lastly we edit our Lighttpd config, again replacing <i>mydomain</i>:</p>
 <pre class="prettyprint">
@@ -80,7 +80,7 @@ $ cat privkey.pem cert.pem > ssl.pem
 <p>Reload Lighttpd:</p>
 <pre class="unix">/etc/init.d/lighttpd reload</pre>
 <p>and we should now be getting HTTPS everywhere!</p>
-<p>Rejoice that we evade Google's evil gaze for one more day. Nedxt steps should be making sure your cert is always up to date by running this before every 90 days:</p>
+<p>Rejoice that we evaded Google's evil gaze for one more day. Next steps should be making sure your cert is always up to date by running this before every 90 days:</p>
 <pre class="unix">certbot renew </pre>
 <p>Good luck out there.</p>
 <h3>Get Notified of Future Posts</h3>
