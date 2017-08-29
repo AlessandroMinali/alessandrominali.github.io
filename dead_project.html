@@ -1,0 +1,69 @@
+bring back a dead project
+
+try a rackup
+missing proper rack version
+bundle update
+bring me to latest sinatra! oh my
+dm-sqlite-adapter...remember this causing me problems in the past
+somehow completely missing: gem 'dm-sqlite-adapter', :group => :development
+someone is using my ports?
+killall rackup
+go to localhost:9292
+line 69, trying to access old data
+dump db
+it actually installs phantomjs on the first run, haha
+cache was actually never doing anything...need to return after redirect, rookie mistake!
+similiar issue on handling timeouts
+get it on heroku
+was stuck on ruby 2.0.0, bump that to 2.3.0! no issues, whew!
+still old data: heroku pg:reset DATABASE ??? not workings
+env['sinatra.error'].name changed to env['sinatra.error'].message
+IT WORKS
+
+
+TODO
+remove support link
+change contact to link to main blog
+add tech blog link
+update year
+update personal website
+refactor
+make nonblocking
+make it performant
+
+
+501  git diff
+  502  git status
+  503  rm gallery.db 
+  504  git status
+  505  git status
+  506  git commit -am 'back to life'
+  507  git push
+  508  heroku push origin master
+  509  git push heroku master
+  510  ruby -v
+  511  git status
+  512  git commit -am 'ruby up'
+  513  git push
+  514  git push heroku master
+  515  heroku open
+  516  heroku logs
+  517  heroku console
+  518  heroku pg:reset DATABASE
+  519  heroku open
+  520  heroku logs
+  521  heroku logs
+  522  heroku run rake db:migrate 
+  523  heroku pg:reset DATABASE_URL
+  524  heroku logs
+  525  heroku open
+  526  heroku logs
+  527  heroku pg
+  528  heroku pg:reset HEROKU_POSTGRESQL_TEAL_URL
+  529  heroku open
+  530  heroku logs
+  531  git status
+  532  git commit -am 'interface'
+  533  git push
+  534  git push heroku master
+  535  heroku open
