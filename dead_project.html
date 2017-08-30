@@ -100,7 +100,7 @@ heroku logs
 </pre>
 <p>That gives me a <i>tail</i> of the server logs and I see it's a stale db data issue again, similar to what I had on my local. Same solution then, <b>Attempt 6</b>: Reset Heroku db</p>
 <pre class="unix">
-heroku pg:reset HEROKU_POSTGRESQL_TEAL_URL 
+heroku pg:reset HEROKU_POSTGRESQL_TEAL_URL --confirm snppy
 </pre>
 <p>More errors, some complaint about the method <i>:name</i> not existing for <i>env['sinatra.error']</i>. I look at the latest Sinatra README which confirms that this indeed has changed. <b>Attempt 7</b>: replace <i>:name</i> with <i>:message</i></p>
 File: snappy.rb
