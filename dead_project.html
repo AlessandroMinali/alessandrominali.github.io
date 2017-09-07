@@ -41,7 +41,7 @@ Reading time: (2 mins)
 <p>If you are interested this will give you some insight on how programmers debug old/unfamiliar code.</p>
 <p style='text-align: center;'><a href="https://github.com/AlessandroMinali/snappy/tree/fc1cc2ea918fb863c7e8d47e980d0fc2cfd9907e">Here's a link to the repo that I'll be reviving</a>.</p>
 <p>My first deep dive of accepting ruby into my heart involved building many Sinatra apps. One of my favourite projects which I used to showcase my skills was <a href="https://snppy.herokuapp.com">Snappy</a>, an online screenshot tool. It had an api and everything! I was proud of building it. The ecosystem of working with a single file application and hosting it <a href="https://devcenter.heroku.com/articles/rack">free in a matter of minutes on Heroku</a> was awesome! Unfortunately every few months I would get nostalgic and try to visit the site only to be reminded that it was flatly serving an <i>Internal server error</i>.
-<p>I've finally had enough and decided to pull a <a href="https://en.wikipedia.org/wiki/Lazarus">Lazarus</a> and raise this from it's grave. <b>Attempt 1</b>: start the damn thing</p>
+<p>I've finally had enough and decided to pull a <a href="https://en.wikipedia.org/wiki/Lazarus">Lazarus</a> and raise this from its grave. <b>Attempt 1</b>: start the damn thing</p>
 <pre class="unix">rackup</pre>
 <p>All I get in return for visiting this friend is a complaint that he's feeling old. <b>Attempt 2</b>: get latest gems</p>
 <pre class="unix">bundle update</pre>
@@ -87,7 +87,7 @@ end
 </pre>
 <p>In this <i>after</i> request hook I access the db and try to delete stale screenshots. I definitely don't source control user's screenshots so it seems my db had lingering test data. That's an easy fix, <b>Attempt 4</b>: delete db and start fresh</p>
 <pre class="unix">rm gallery.db</pre>
-<p>It works(locally...)! Amazing, though I get a chuckle at seeing <a href="http://phantomjs.org">phantomjs</a> getting installed for it's first time use on this laptop. Since the boat is no longer under water, let's get it back online at Heroku. Heroku quickly complains about ruby versions. It seems like it was stuck on whatever version I used years ago but the latest gems needed <i>< ruby2.3.x</i>. <b>Attempt 5</b>: Update Heroku's ruby</p>
+<p>It works(locally...)! Amazing, though I get a chuckle at seeing <a href="http://phantomjs.org">phantomjs</a> getting installed for its first time use on this laptop. Since the boat is no longer under water, let's get it back online at Heroku. Heroku quickly complains about ruby versions. It seems like it was stuck on whatever version I used years ago but the latest gems needed <i>< ruby2.3.x</i>. <b>Attempt 5</b>: Update Heroku's ruby</p>
 File: Gemfile
 <pre class="prettyprint linenums">
 source 'https://rubygems.org'
