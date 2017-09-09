@@ -17,7 +17,14 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aa
 .unix, b, i {background-color: #eee}
 .unix::before {content: '$ ';}
 .unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
-pre {overflow-wrap: break-word;}
+pre {overflow-wrap: break-word; }
+pre code.add span {color:green !important;}
+pre code.add::before {content:'+ '; color:green}  
+pre code.sub span {color:red !important;}
+pre code.sub::before {content:'- '; color:red}
+.diff .linenums{padding:0;}
+.diff li {list-style-type: none !important;}
+.log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
 </style>
 <title>
 How to Use Custom Rack Middleware to Block Malicious Users
@@ -35,14 +42,154 @@ How to Use Custom Rack Middleware to Block Malicious Users
 Building Rack Middleware to Block Malicious Users
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Fri 8 Sep 2017<br>
-Reading time: (- mins)
+Fri 08 Sep 2017<br>
+Reading time: (4 mins)
 </p>
+There is an ever present threat on the internet. Bots are constantly crawling every access point looking for weaknesses to exploit. This bogs down the availability of our site and clutters logs. Here is an example from the logs of my website <a href='https://packmule.ca'>packmule.ca</a>:</p>
+<pre class='log'>
+142.54.161.10 -- "GET /new/wp-admin/setup-config.php" 404
+192.187.97.66 -- "GET /wp-admin" 404
+198.204.251.162 -- "GET /wp-login.php" 404
+142.54.171.66 -- "GET /wp-content/uploads/8d4efb5471f2b9d.php" 404
+121.42.50.93 -- "GET /xmlrpc.php" 404
+</pre>
+<p>I don't have a lick of php on that site and I'm definitely not running any instance of <a href='https://wordpress.com'>WordPress</a>. But they don't care about that...they will still poke and prod <a href='https://wpvulndb.com'>known vulnerabilities</a>. So what should we do about these unwanted guests. My idea is to block them from further accessing any part of my website. I'll be strict and implement a one strike policy: try a single exploit against my server and you can never visit any resource at that IP ever again.</p>
+<p>There exists a pretty beefy solution in <a href='https://github.com/kickstarter/rack-attack'>Rack::Attack</a> but that is overkill for what I want here. I want minimal overhead and a singular focus in terms of features. This is a perfect chance to build my own <a href='https://rack.github.io'>Rack middleware</a> to solve my problem! Say <i>HELLO</i> to <b>Rack::Smack</b>:
+</p>
+<pre class='prettyprint linenums'>
+module Rack
+  class Smack
+    def initialize(app)
+    end
+    def call(env)
+      [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+    end
+  end
+end
+</pre>
+<p>Now if I put</p>
+<pre class='prettyprint'>
+use Rack::Smack
+</pre>
+<p>into my middleware stack every response will be blocked! That technically satisfies my condition but obviously I want to allow legitimate traffic through. I will search the request path for suspicious keywords, if found I'll terminate request processing else I will send the request forward to the rest of my application:</p>
+<pre class='prettyprint linenums diff'>
+module Rack
+  class Smack
+<code class='add'>  BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
 
-WRITING IN PROGRESS
+</code>    def initialize(app)
+<code class='add'>    @app = app</code>
+    end
 
+    def call(env)
+<code class='sub'>    [403, { 'Content-Type' => 'text/html' }, ['Banned.']]</code>
+<code class='add'>    @req = Rack::Request.new(env)
+    return smack if BLOCKED.any? { |block| @req.path.index(block) }
+    @app.call(env)</code>
+    end
+<code class='add'>
+  def smack
+    [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+  end</code>
+  end
+end
+</pre>
 
+<p>I define an array of strings, that I would like to ban, in the <b>BLOCKED</b> variable. In <i>:initialize</i> I take the app parameter and store it in an instance var so if I want I can pass it on for further processing. In <i>:call</i> I take advantage of <a href='http://www.rubydoc.info/gems/rack/Rack/Request'>Rack::Request</a> which makes it easier to deal with the Rack environment. Like I said before, I'll search the request path against my blocked strings and if it matches match I'll send them to <i>:smack</i> which will end processing and give them a <a href='https://en.wikipedia.org/wiki/HTTP_403'>403</a>. If no match is made <i>@app.call(env)</i> exits this middleware and passes processing forward to the next app in the stack. Neat!</p>
 
+<p>Right now 'banning' is stateless. My app will not remember that someone was banned and they can keep accessing the rest of my site as if nothing happened. I need to persist the banned state for malicious users and wholly block them from all my content. To do this I'll use a flat file to store offenders. I originally used the <a href="http://ruby-doc.org/stdlib/libdoc/csv/rdoc/CSV.html">CSV library</a> but normal file IO is <b>waaay</b> faster for our purposes. Anyways here we go:</p>
+<pre class='prettyprint linenums diff'>
+module Rack
+  class Smack
+    BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
+<code class='add'>  FILENAME = './banlist.txt'.freeze</code>
+
+    def initialize(app)
+      @app = app
+<code class='add'>    IO.write(FILENAME, '') unless ::File.file?(FILENAME)</code>
+    end
+
+    def call(env)
+      @req = Rack::Request.new(env)
+<code class='sub'>    return smack if BLOCKED.any? { |block| @req.path.index(block) }</code>
+<code class='add'>    return smack if banned?
+    return ban!  if BLOCKED.any? { |block| @req.path.index(block) }</code>
+      @app.call(env)
+    end
+<code class='add'>
+  def ban!
+    IO.write(FILENAME, "#{@req.ip},#{@req.path},#{Time.now}\n", mode: 'a')
+    smack
+  end
+
+  def banned?
+    IO.foreach(FILENAME) do |row|
+      return true if row.split(',')[0] == @req.ip
+    end
+    false
+  end
+
+</code>    def smack
+      [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+    end
+  end
+end
+</pre>
+<p>We add a <b>FILENAME</b> constant and then in <i>:initialize</i> I attempt to create the file that will store our banned users unless it already exists. In <i>:call</i> the first thing I check is if they are <i>:banned?</i>. This new method <a href='https://stackoverflow.com/a/25189286'>efficiently reads</a> our ban list and checks if the current user's ip matches a banned ip and if so <i>:smack</i> will make sure all further processing never happens. Otherwise we move on to check what is being requested. If the request contains a malicious keyword then we make sure to take note with <i>:ban!</i>. This method writes the user's ip with some other information to the log and then <i>:smack</i>s them out! Any future visits for that user will now terminate above when they are searched in the file. In the case that the request is not suspicious the next middleware is called, and everything moves along as normal. This gives me exactly the behaviour I need to catch and deny malicious users! Here is the final code that I use on production for my apps:</p>
+<pre class='prettyprint linenums'>
+module Rack
+  # don't cross me boy
+  class Smack
+    ASSET    = %w[css gif jpg jpeg js png ico txt].freeze
+    BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
+    FILENAME = './ban_list.csv'.freeze
+
+    def initialize(app, opts = {})
+      @app     = app
+      @asset   = opts.delete(:asset) || ASSET
+      @blocked = opts.delete(:list)  || BLOCKED
+      @file    = opts.delete(:file)  || FILENAME
+      raise TypeError        unless options_valid?
+      IO.write(FILENAME, '') unless ::File.file?(@file)
+    end
+
+    def call(env)
+      @req = Rack::Request.new(env)
+      return @app.call(env) if @asset.include? @req.path.split('.')[-1]
+      return smack          if banned?
+      return ban!           if @blocked.any? { |block| @req.path.index(block) }
+      @app.call(env)
+    end
+
+    private
+
+    def ban!
+      IO.write(@file, "#{@req.ip},#{@req.path},#{Time.now}\n", mode: 'a')
+      smack
+    end
+
+    def banned?
+      IO.foreach(@file) do |row|
+        return true if row.split(',')[0] == @req.ip
+      end
+      false
+    end
+
+    def options_valid?
+      @blocked.is_a?(Array) && @asset.is_a?(Array) && @file.is_a?(String)
+    end
+
+    def smack
+      [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+    end
+  end
+end
+</pre>
+<p>Pretty much the same with some extra candy. I allow the ability to customize the <b>BLOCKED</b> list as well as the <b>FILENAME</b>. I also add a new list called <b>ASSET</b> which allows me to always skip checking certain requests and lower the overhead of my app's response time. I also do some very basic error checking so we break on initialization instead of at runtime if bad options are given. Here is a usage example:</p>
+<pre class='prettyprint'>
+use Rack::Smack file: 'bad_guys.txt', list: ['wp', 'wordpress', php', 'admin']
+</pre>
+<p>Feel free to grab <a href='https://github.com/AlessandroMinali/rack-smack/blob/master/smack.rb'>Rack::Smack from here</a> and build upon it! Good luck out there and fight the good fight!</p>
 <h3>Get Notified of Future Posts</h3>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
