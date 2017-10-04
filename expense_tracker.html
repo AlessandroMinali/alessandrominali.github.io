@@ -37,7 +37,7 @@ Simply Tracking Your Expenses (UNIX/Bash)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Wed 4 Oct 2017<br>
-Reading time: (3 mins)
+Reading time: (4 mins)
 </p>
 <p>
 Keeping track of the money I spend is always a struggle. As I have begun solving more and more of my problems via command line tools I thought I'd tackle this one as well.
@@ -76,11 +76,11 @@ And that's the bare minimum we need to track expenses from terminal!
 <b>Line 1</b>: Convention telling the *nix shell which interpreter to run, in our case it should be <i>bash</i><br>
 <b>Line 3</b>: Error out if something bad happens rather than continue executing. <a href='https://explainshell.com/explain?cmd=set+-e'>More details here</a><br>
 <b>Line 5</b>: Declare our file variable. We will need this as the script grows<br>
-<b>Etc</b>: We loop infintely reading in user input to <i>$statement</i> and we append the line with a date stamp to our log. To exit the user must force quit (cntrl+C). For the reporting I only care about the month and year so we call:
+<b>Etc</b>: We loop infinitely reading in user input to <i>$statement</i> and we append the line with a date stamp to our log file. To exit the user must force quit (control+C). For each expense I care about the month and year it is entered, so we call:
 </p>
 <pre class='unix'>date "+%b %Y" # returns date in the form of 'Oct 2017'</pre>
 <p>
-This manages script logs our expenses but I don't feel like having to open the file and figure out how much I've spent. We'll extend our tool to do this for us!
+This code easily files our expenses but I don't feel like having to manually go and add up how much I've spent. We'll extend our tool to do this for us!
 </p>
 <pre class='prettyprint linenums:6'>
 
@@ -118,9 +118,15 @@ fi
 <p>
 To ask for a calculation our tool with take a <i>-c</i> flag parameter. <a href="https://www.mkssoftware.com/docs/man1/getopts.1.asp">getopts</a> is a useful program that allows us to handle these flags. At this point we only handle <i>-c</i> and set a variable to <i>true</i>, as well as handle the two error cases that come with flag params (invalid flag and/or missing required parameters).
 </p>
-<p>If <i>$calculate</i> is found to be <i>true</i> then we find all entries for the current year and print out the results. <a href=>Here is a useful command breakdown of line 27</a> My quick summary: <b>grep</b> case insensitive by <i>$year</i> that is followed by a numerical value in the next column from <i>$filename</i>, pass that to <b>awk</b> to grab the third column (which in our case corresponds to the numerical values we have logged), pass that to <b>paste</b> which joins each value together with "+" signs and pass that to <b>bc</b> which performs the calculation! Whew!</p>
+<p>If <i>$calculate</i> is found to be <i>true</i> then we find all entries for the current year and print out the results. <a href='https://explainshell.com/explain?cmd=grep+-i+%22%24year+%5Cd%22+%24filename+%7C+awk+%27%7Bprint+%243%7D%27+%7C+paste+-sd%2B+-+%7C+bc'>Here is a useful command breakdown of line 27</a>. My quick summary: <b>grep</b> case insensitive by <i>$year</i> that is followed by a numerical value in the next column from <i>$filename</i>, pass that to <b>awk</b> to grab the third column (which in our case corresponds to the numerical values we have logged), pass that to <b>paste</b> which joins each value together with "+" signs and pass that to <b>bc</b> which performs the calculation! Whew!</p>
 <p>Here it is in action:</p>
 <img src='./assets/budget-second.png' />
+<p>The last step is to allow us to run it from any directory. This can be done by moving the file into <i>$PATH</i>. There are few ways to do this. To see all folders on your executing path use this:
+</p>
+<pre class='unix'>tr ':' $'\n' <<< $PATH</pre>
+<p>
+Simply move your file into any of these folders, I usually put it into <b>/usr/local/bin</b>. Reset all terminal sessions and now you should be able to call budget.sh anywhere and without the leading <i>./</i>
+</p>
 <p>
 That's all the functionality I'll discuss in this blog post. Feel free to add more features as you see fit. I personally added the ability to overwrite the last line (cause I make spelling mistakes), the ability to show all the items tallied up in a calculation, and the ability to specify month and/or year to calculate on! You can view the full implementation I personally use <a href='https://gist.github.com/AlessandroMinali/46e178597c116fdb61fd6085ea29402f'>here</a>!
 </p>
