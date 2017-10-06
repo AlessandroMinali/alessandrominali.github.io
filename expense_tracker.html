@@ -37,7 +37,7 @@ Simply Tracking Your Expenses (UNIX/Bash)
 Simply Tracking Your Expenses (UNIX/Bash)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Wed 4 Oct 2017<br>
+Wed 04 Oct 2017<br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
 <p>
@@ -136,13 +136,14 @@ That's all the functionality I'll discuss in this blog post. Feel free to add mo
 <script>
 var paragraphs = document.getElementsByTagName("p");
 var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
 var display = document.getElementById("time");
 var count = 0;
 for(var i = 0; i < paragraphs.length; i++)
 {
     count = count + paragraphs[i].innerHTML.split(" ").length;
 }
-display.innerHTML = Math.round(count/250+code.length);
+display.innerHTML = Math.round(count/250+code.length+images.length);
 </script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">

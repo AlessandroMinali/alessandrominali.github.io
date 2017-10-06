@@ -21,9 +21,9 @@ pre {overflow-wrap: break-word;}
 .prettyprint{border: 1px solid #dedede;}
 </style>
 <title>
-
+Reading Time for Technical Blogs (Javascript)
 </title>
-<meta name="description" content="">
+<meta name="description" content="A guide on how to calculate a best estimate of how long a blog entry that covers code will take to read">
 </head>
 <body>
 <ul id="nav">
@@ -33,29 +33,76 @@ pre {overflow-wrap: break-word;}
 <li><a href="/contact">Contact</a></li>
 </ul>
 <h1>
-
+Reading Time for Technical Blogs  (Javascript)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Mon 28 Aug 2017<br>
+Fri 06 Oct 2017<br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
+<p>
+In our busy lives and with thousands of monkeys at type writers putting out blogs posts, knowing how long an article will take to read is priceless. A quick <a href='https://en.wikipedia.org/wiki/Google_(verb)'>google</a> will tell you that the <a href='https://encrypted.google.com/search?hl=en&q=average%20reading%20speed'>average reading speed is around 200 words per minute</a>! Ignoring that typical comprehension is really low (only 60%!), this gives us pretty clear route of how to generate a reading time for any article:
+</p>
+<pre class='prettyprint linenums'>
+var paragraphs = document.getElementsByTagName("p");
+var display    = document.getElementById("time");
+var count      = 0;
 
+for (var i = 0; i < paragraphs.length; i++) {
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
 
+display.innerHTML = Math.round(count/200);	
+</pre>
+<p>
+We simply grab each <b>p</b> tag, split it's content into words by breaking on 'spaces'(" ") and count the total number of 'words'. We divide that by the average speed of 200. Tada! For this page that gives us: <i><span id="time-1">~</span> mins</i>.
+</p>
+<p> This gives a pretty rough, but decent estimate. I have an issue though, my blog posts contain plenty of code snippets. Code reading time/comprehension is a beast of a problem, and the numbers for the average there vary widely! So how can I get something that better approximates the time to read a technical blog?</p>
+<p>
+Like any good problem solver we'll make some assumptions and build and expand our simple algorithm from above.
+</p>
+<p><b>My first assumption</b> that I've already made is that headings take no time to read. I think that is fine since usually those can be skimmed without much thought.
+</p>
+<p><b>My second assumption</b> that I'll make now is that my readers are better than average. Looking at code all day must make programmers slightly faster at reading, right? So I'll bump the speed from <i>200 -> 250</i>.
+</p>
+<p><b>The last assumption</b> is that each block of code will take on average of one minute to read. While my code snippets aren't usually complex I still want to reflect that some time should be taken going over them a little slower than you would usually a block of text. I allot <i>1 minute</i> per code block found in a posting. On this blog code blocks always have the class <i>prettyprint</i> so that's how I'll wrangle and count all of them:
+</p>
+<pre class='prettyprint linenums'>
+var paragraphs = document.getElementsByTagName("p");
+var code       = document.getElementsByClassName("prettyprint");
+var display    = document.getElementById("time");
+var count      = 0;
 
+for(var i = 0; i < paragraphs.length; i++) {
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+
+display.innerHTML = Math.round(count/250+code.length);
+</pre>
+<p>
+That gives us the result you see at the top of the page! Neat huh?
+</p>
 
 
 <h3>Get Notified of Future Posts</h3>
 <script>
 var paragraphs = document.getElementsByTagName("p");
 var code = document.getElementsByClassName("prettyprint");
-var images = document.getElementsByTagName("img");
 var display = document.getElementById("time");
 var count = 0;
 for(var i = 0; i < paragraphs.length; i++)
 {
     count = count + paragraphs[i].innerHTML.split(" ").length;
 }
-display.innerHTML = Math.round(count/250+code.length+images.length);
+display.innerHTML = Math.round(count/250+code.length);
+var paragraphs = document.getElementsByTagName("p");
+var display = document.getElementById("time-1");
+var count = 0;
+
+for (var i = 0; i < paragraphs.length; i++) {
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+
+display.innerHTML = Math.round(count/200);	
 </script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
