@@ -18,6 +18,7 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aa
 .unix::before {content: '$ ';}
 .unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
 pre {overflow-wrap: break-word;}
+.prettyprint{border: 1px solid #dedede;}
 </style>
 <title>
 
@@ -36,7 +37,7 @@ pre {overflow-wrap: break-word;}
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Mon 28 Aug 2017<br>
-Reading time: (15 mins)
+Reading time: (<span id='time'>~</span> mins)
 </p>
 
 
@@ -44,6 +45,17 @@ Reading time: (15 mins)
 
 
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}

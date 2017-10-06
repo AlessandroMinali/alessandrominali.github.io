@@ -43,7 +43,7 @@ Building Rack Middleware to Block Malicious Users
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Fri 08 Sep 2017<br>
-Reading time: (4 mins)
+Reading time: (<span id='time'>~</span> mins)
 </p>
 There is an ever present threat on the internet. Bots are constantly crawling every access point looking for weaknesses to exploit. This bogs down the availability of our site and clutters logs. Here is an example from the logs of my website <a href='https://packmule.ca'>packmule.ca</a>:</p>
 <pre class='log'>
@@ -191,6 +191,17 @@ use Rack::Smack file: 'bad_guys.txt', list: ['wp', 'wordpress', php', 'admin']
 </pre>
 <p>Feel free to grab <a href='https://github.com/AlessandroMinali/rack-smack/blob/master/smack.rb'>Rack::Smack from here</a> and build upon it! Good luck out there and fight the good fight!</p>
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}

@@ -42,7 +42,7 @@ Making an App Asynchronous and More (Sinatra/PhantomJs)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Wed 06 Sep 2017<br>
-Reading time: (5 mins)
+Reading time: (<span id='time'>~</span> mins)
 </p>
 <p>After resurrecting <a href='https://snppy.herokuapp.com'>Snappy</a> from the grave of my personal projects in the <a href='/dead_project'>last blog post</a>, the next steps is where we get to stretch our brain muscles. <b>Makeover time!</b></p>
 <p>Before digging into the refactor I want to grab two of my favourite gems that I use on every ruby project. The first is the <a href='https://github.com/pry/pry'>pry gem</a> which is actually a replacement for the standard interactive ruby <a href='https://en.wikipedia.org/wiki/REPL'>REPL</a>. The main use I have for this gem is its ability for inline debugging! Instead of putting print statements everywhere all you need now is a:</p>
@@ -182,6 +182,17 @@ xhr.onreadystatechange = function () {
 </p>
 <p><b>TADA!</b> Snappy is now running...snappily ;) Be sure to dig around the code I linked for these last few steps since I glossed over it. It's barebones AJAX so if you are unsure what is going down, don't be afraid to Google it out.</p>
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}

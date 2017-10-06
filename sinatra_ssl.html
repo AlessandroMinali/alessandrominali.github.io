@@ -85,6 +85,17 @@ cat privkey.pem cert.pem > ssl.pem
 <pre class="unix">certbot renew </pre>
 <p>Good luck out there.</p>
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}

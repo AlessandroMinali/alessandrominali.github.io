@@ -36,7 +36,7 @@ Raising a Dead Project Back to Life (Sinatra/PhantomJs)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Tues 29 Aug 2017<br>
-Reading time: (2 mins)
+Reading time: (<span id='time'>~</span> mins)
 </p>
 <p>If you are interested this will give you some insight on how programmers debug old/unfamiliar code.</p>
 <p style='text-align: center;'><a href="https://github.com/AlessandroMinali/snappy/tree/fc1cc2ea918fb863c7e8d47e980d0fc2cfd9907e">Here's a link to the repo that I'll be reviving</a>.</p>
@@ -112,6 +112,17 @@ end
 </pre>
 <p>FINALLY IT WORKS! Not too much trouble to bring a beloved friend back on his feet. <a href="https://snppy.herokuapp.com">Try it out</a> and feel free to leave any feedback. My next post will be about quickly revamping this old beginner project using all the knowledge I've gained over the last few years.</p>
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}

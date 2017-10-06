@@ -18,6 +18,7 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aa
 .unix::before {content: '$ ';}
 .unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
 pre {overflow-wrap: break-word;}
+.prettyprint{border: 1px solid #dedede;}
 img {border: 1px solid #ccc;}
 </style>
 <title>
@@ -37,7 +38,7 @@ Simply Tracking Your Expenses (UNIX/Bash)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Wed 4 Oct 2017<br>
-Reading time: (4 mins)
+Reading time: (<span id='time'>~</span> mins)
 </p>
 <p>
 Keeping track of the money I spend is always a struggle. As I have begun solving more and more of my problems via command line tools I thought I'd tackle this one as well.
@@ -132,6 +133,17 @@ That's all the functionality I'll discuss in this blog post. Feel free to add mo
 </p>
 <p>Best of luck to myself and hopefully this method finally gets me logging and paying attention to how much money I toss around every which way.</p>
 <h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length);
+</script>
 <!-- Begin MailChimp Signup Form -->
 <style type="text/css">
 #mce-EMAIL {width: 40%;}
