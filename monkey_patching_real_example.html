@@ -118,8 +118,7 @@ module Surrealist
 end
 
 # Using any ORM now we can
-Surrealist.surrealize_collection(User.all)
-  # => "[{\"name\":\"Alessandro\"]"
+Surrealist.surrealize_collection(User.all) # => ["{\"name\":\"Alessandro\"}"]
 </pre>
 <p>
 Monkey-patching is a powerful tool in the ruby ecosystem but wield it sparingly especially if you are going to jumble into code that does not <i>belong</i> to you. If you are interested <a href="https://github.com/nesaulov/surrealist/issues/13">here is the back and forth of this problem being solved on the Surrealist project</a>.
