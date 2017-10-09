@@ -52,7 +52,7 @@ class String
   end
 end
 </pre>
-<p>Now imagine overriding a more important class? Scary right! Against the general rule of thumb, sometimes we forgo the warnings of other rubyists and go ahead to patch in stuff to allow for nicer DSLs and APIs with ruby. Here is a real example that I came across in the <a href="https://github.com/nesaulov/surrealist">Surrealist gem</a>.
+<p>Now imagine overriding a more important class? Scary right! Against the general rule of thumb, sometimes we forgo the warnings of other rubyists and go ahead to patch in stuff to allow for nicer DSLs and APIs. Here is a real example that I came across while working on the <a href="https://github.com/nesaulov/surrealist">Surrealist</a> gem.
 </p>
 <p>
 The problem faced was that our method <i>#surrealize</i> worked only on single records returned from ORMs(like <a href="https://github.com/rails/rails/tree/master/activerecord">ActiveRecord</a>). When dealing with collection of records it is harder for us to hook in and provide a custom method.
@@ -81,7 +81,7 @@ User.first.surrealize # => "{\"name\":\"Alessandro\"}"
 User.all.surrealize   # => ["{\"name\":\"Alessandro\"}"]
 </pre>
 <p>
-So this works and from a user's point of view it seems like ordinary behaviour. The problem though is that they are unaware that I'm in and mucking around with <b>Array</b>. To get ActiveRecord working as well, some custom violence is needed:
+So this works and from a user's point of view it seems like expected behaviour. The problem though is that they are unaware that I'm in and mucking around with <b>Array</b>. To get ActiveRecord working as well, some custom violence is needed:
 </p>
 <pre class='prettyprint'>
 if defined?(ActiveRecord)
@@ -93,7 +93,7 @@ end
 <p>
 ActiveRecord returns a dynamic instance, ActiveRecord_Relation, built from the model. We just delegate our method to <i>#records</i> which actually produces an Array holding all the records(duh). Since we already patched Array this now works!
 </p>
-<p>Now the question is, is this the right way to solve the problem? That's a tough call. Things to consider:
+<p>Now the question is, is this the right way to solve the problem? That's a tough call.
 <blockquote>
 <b>- Will more `things` probably need custom patching?</b><br>
 <b>- Potentially breaking stuff due to unexpected behaviour in trusted classes?</b><br>
