@@ -78,6 +78,7 @@ display.innerHTML = Math.round(count/250+code.length+images.length);
 <h2>Questions</h2>
 <div id="disqus_thread">COMMENTS WILL LOAD HERE</div>
 <script>
+(function () {
 //Modified from: //christianfei.com/posts/how-to-lazy-load-disqus-comments/
 var comments = document.getElementById('disqus_thread'),
 disqusLoaded = false;
@@ -107,6 +108,7 @@ var commentsOffset = findTop(comments);
 window.addEventListener('scroll', throttle(function() {
 if(!disqusLoaded && window.pageYOffset > commentsOffset - 1000) {
 loadDisqus();}}, 100));}
+} )();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
