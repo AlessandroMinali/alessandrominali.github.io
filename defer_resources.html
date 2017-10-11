@@ -1,0 +1,382 @@
+<html>
+<head>
+<style>
+body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
+@media screen and (max-width: 800px) {body {width: 90%;}}
+h1 {text-align: center; font-size: 2em; margin-top: 50px;}
+h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
+p {text-align: justify; font-size: 1em;}
+dl {margin: 50px 50px 20px 50px; padding: 0;}
+dt {font-weight: bold; float: left; width: 30%; padding: 0; margin: 0;}
+dd {padding-left: 23%;}
+a {text-decoration: underline; font-weight: normal; color: #555555;}
+a:hover {color: white; background-color: #333}
+ul {list-style-type: none; display: block; height: 1em; text-align: center; margin: 25px 0px; padding: 0; clear: both;}
+#nav>li {display: inline; padding: 0px 20px; font-weight: bold;}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aaa; list-style-type: decimal !important;}
+.unix, b, i {background-color: #eee}
+.unix::before {content: '$ ';}
+.unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
+pre {overflow-wrap: break-word;}
+.prettyprint{border: 1px solid #dedede;}
+table{margin-top:20px; width: 100%; padding: 10px 20px;}
+th{text-align:left;}
+tr:not(:last-child) td{border-bottom: 1px solid #ccc;}
+td:not(:last-child){border-right: 1px solid #ccc;}
+td{padding:5px;}
+td:first-child{padding-left:0;}
+td:last-child{padding-right:0;}
+small{font-size:10px;}
+</style>
+<title>
+Lower Page Sizes by Defering Junk (Javascript)
+</title>
+<meta name="description" content="A guide on not loading a bunch of garbage javascript, goddammit!">
+</head>
+<body>
+<ul id="nav">
+<li><a href="/">More Babble</a></li>
+<li></li>
+<li></li>
+<li><a href="/contact">Contact</a></li>
+</ul>
+<h1>
+Lower Page Sizes by Defering Junk (Javascript)
+</h1>
+<p style='font-weight: bold; text-align: right;'>
+2017<br>
+Reading time: (<span id='time'>~</span> mins)
+</p>
+<p>
+Everyone knows webpage sizes have ballooned and continue to in recent times. Even <a href='https://www.wired.com/2016/04/average-webpage-now-size-original-doom/'>articles reporting on it are part of the problem</a>. Most sites serve everything and the kitchen sink to a user even if they never end up interacting with bloated javascript modules. I have a simple solution, don't give users junk unless they are actively seeking it! One step shy of walling off all content behind a series of confirmation buttons, we can make pretty good progress just by smartly loading-in features.
+</p>
+<p>Using a metric of how many DOOM executables of space(<b>2.39MB</b>) we can save, I'll tackle 3 common use cases:
+<table>
+	<thead>
+		<th>Feature</th>
+		<th>Effort</th>
+		<th>DOOMs saved</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td><a href='#disqus'>Disqus Comments</a></td>
+			<td>Copy/Paste</td>
+			<td>~0.50(<b>1.20MB</b>)</td>
+		</tr>
+		<tr>
+			<td><a href='#yt_player'>Youtube Player</a></td>
+			<td>Copy/Paste</td>
+			<td>~0.68(<b>1.62MB</b>)</td>
+		</tr>
+		<tr>
+			<td><a href='#gmap'>Google Maps</a></td>
+			<td>A little leg work</td>
+			<td>~0.96(<b>2.30MB</b>)</td>
+		</tr>
+	</tbody>
+</table>
+</p>
+<hr>
+<h3 id='disqus'>Disqus</h3>
+<b>HTML:</b>
+<pre class='prettyprint'>
+&lt;div id=&quot;disqus_thread&quot;&gt;&lt;/div&gt;
+&lt;noscript&gt;
+Please enable JavaScript to view the
+&lt;a href=&quot;https://disqus.com/?ref_noscript&quot;&gt;comments powered by Disqus.&lt;/a&gt;
+&lt;/noscript&gt;
+</pre>
+<b>JAVSCRIPT:</b>
+<pre class='prettyprint'>
+( function() {	
+  //Modified from: //christianfei.com/posts/how-to-lazy-load-disqus-comments/
+  var comments = document.getElementById('disqus_thread'),
+    disqusLoaded = false;
+
+  function loadDisqus() {
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = '//REPLACE_SHORTNAME.disqus.com/embed.js'; // REPLACE HERE
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+    disqusLoaded = true;
+  }
+
+  function findTop(obj) {
+    var curtop = 0;
+    if (obj.offsetParent) {
+      do {
+          curtop += obj.offsetTop;
+      } while (obj = obj.offsetParent);
+      return curtop;
+    }
+  }
+
+  // Throttle scroll event: //codepen.io/SitePoint/pen/RRLVAL
+  function throttle(fn, wait) {
+    var time = Date.now();
+    return function() {
+      if ((time + wait - Date.now()) &lt; 0) {
+        fn();
+        time = Date.now();
+      }
+    }
+  }
+
+  if(comments) {
+    var commentsOffset = findTop(comments);
+
+    window.addEventListener('scroll', throttle(function() {
+      if(!disqusLoaded &amp;&amp; window.pageYOffset > commentsOffset - 1000) { // CUSTOMIZE: distance to check
+        loadDisqus();
+      }
+    }, 100)); // CUSTOMIZE: throttle frequency
+  }
+} )();
+</pre>
+<b>CUSTOMIZE:</b>
+<p>
+JAVSCRIPT: <i>REPLACE_SHORTNAME</i> with the one given to your website, found in<br>Disqus>Admin>Settings>General-Shortname<br><br>
+Optional: distance to start loading, throttle frequency
+</p>
+<b>EXPLANATION:</b>
+<p>
+Every time the user scrolls (throttled to 100ms periods), check if we are within 1000px to the top of the Disqus DIV. If we are, run the code that Disqus provides to bring in their comment module.
+</p>
+<b>EXAMPLE:</b>
+<p>Used on this page, check the bottom!</p>
+<hr>
+<h3 id='yt_player'>Youtube Player</h3>
+<b>HTML:</b>
+<pre class='prettyprint'>
+&lt;div class=&quot;youtube&quot; data-embed=&quot;REPLACE_VIDEO_ID&quot;&gt; &lt;!-- REPLACE HERE --&gt;
+	&lt;div class=&quot;play-button&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+<b>CSS:</b>
+<pre class='prettyprint lang-css'>
+.youtube{background-color:#000;margin-bottom:30px;position:relative;padding-top:56.25%;overflow:hidden;cursor:pointer}.youtube img{width:100%;top:-16.82%;left:0;opacity:.7}.youtube .play-button{width:90px;height:60px;background-color:red;box-shadow:0 0 30px rgba(0,0,0,0.6);z-index:1;opacity:.8;border-radius:6px}.youtube .play-button:before{content:"";border-style:solid;border-width:15px 0 15px 26px;border-color:transparent transparent transparent #fff}.youtube img,.youtube .play-button{cursor:pointer}.youtube img,.youtube iframe,.youtube .play-button,.youtube .play-button:before{position:absolute}.youtube .play-button,.youtube .play-button:before{top:50%;left:50%;transform:translate3d(-50%, -50%, 0)}.youtube iframe{height:100%;width:100%;top:0;left:0}
+</pre>
+<b>JAVASCRIPT:</b>
+<pre class='prettyprint'>
+( function() {
+  var youtube = document.getElementsByClassName( "youtube" );
+  for (var i = 0; i &lt; youtube.length; i++) {
+    var source = "https://img.youtube.com/vi/"+ youtube[i].dataset.embed +"/hqdefault.jpg";
+    var image = new Image();
+    image.src = source;
+    image.addEventListener( "load", function() {
+      youtube[ i ].appendChild( image );
+    }( i ) );
+    youtube[i].addEventListener( "click", function() {
+      var iframe = document.createElement( "iframe" );
+      iframe.setAttribute( "frameborder", "0" );
+      iframe.setAttribute( "allowfullscreen", "" );
+      iframe.setAttribute( "src", "https://www.youtube.com/embed/"+ this.dataset.embed +"?rel=0&showinfo=0&autoplay=1" );
+      this.innerHTML = "";
+      this.appendChild( iframe );
+    } );
+  };
+} )();
+</pre>
+<b>CUSTOMIZE:</b>
+<p>
+HTML: <i>REPLACE_VIDEO_ID</i> with the id of the video you want.<br>
+Ex: <a href='https://www.youtube.com/watch?v=jNQXAC9IVRw'>https://www.youtube.com/watch?v=jNQXAC9IVRw</a> id would be the <b>v</b> query param value of 'jNQXAC9IVRw'<br><br>
+Optional:
+CSS styling can be adjusted as needed.
+</p>
+<b>EXPLANATION:</b>
+<p>Automatically grabs a still image from the video using the youtube api. Mock out the video player with the image and a fake button. If a user clicks, load in the actual embedded video and autoplay.
+</p>
+<b>EXAMPLE:</b>
+<style>
+.youtube{background-color:#000;margin-bottom:30px;position:relative;padding-top:56.25%;overflow:hidden;cursor:pointer}.youtube img{width:100%;top:-16.82%;left:0;opacity:.7}.youtube .play-button{width:90px;height:60px;background-color:red;box-shadow:0 0 30px rgba(0,0,0,0.6);z-index:1;opacity:.8;border-radius:6px}.youtube .play-button:before{content:"";border-style:solid;border-width:15px 0 15px 26px;border-color:transparent transparent transparent #fff}.youtube img,.youtube .play-button{cursor:pointer}.youtube img,.youtube iframe,.youtube .play-button,.youtube .play-button:before{position:absolute}.youtube .play-button,.youtube .play-button:before{top:50%;left:50%;transform:translate3d(-50%, -50%, 0)}.youtube iframe{height:100%;width:100%;top:0;left:0}
+#slider-1,#slider-2{overflow-y: hidden;max-height: 500px;transition-property: all;transition-duration: .5s;}#slider-1.closed,#slider-2.closed{max-height: 0px;transition-property: all;transition-duration: .5s;}
+</style>
+<button onclick="document.getElementById('slider-1').classList.toggle('closed');var iframe=document.getElementById('yt_frame');if ( iframe !== null ){var iframeSrc = iframe.src;iframe.src = iframeSrc.replace('autoplay=1','autoplay=0');}">Toggle</button>
+<div id='slider-1' class='closed'>
+	<div class="youtube" data-embed="jNQXAC9IVRw">
+		<div class="play-button"></div>
+	</div>
+</div>
+<script>
+( function() {
+  var youtube = document.getElementsByClassName( "youtube" );
+  for (var i = 0; i < youtube.length; i++) {
+    var source = "https://img.youtube.com/vi/"+ youtube[i].dataset.embed +"/hqdefault.jpg";
+    var image = new Image();
+    image.src = source;
+    image.addEventListener( "load", function() {
+      youtube[ i ].appendChild( image );
+    }( i ) );
+    youtube[i].addEventListener( "click", function() {
+      var iframe = document.createElement( "iframe" );
+      iframe.setAttribute('id', 'yt_frame');
+      iframe.setAttribute( "frameborder", "0" );
+      iframe.setAttribute( "allowfullscreen", "" );
+      iframe.setAttribute( "src", "https://www.youtube.com/embed/"+ this.dataset.embed +"?rel=0&showinfo=0&autoplay=1" );
+      this.innerHTML = "";
+      this.appendChild( iframe );
+    } );
+  };
+} )();
+</script>
+<p>
+</p>
+<hr>
+<h3 id='gmap'>Google Maps</h3>
+<b>HTML:</b>
+<pre class='prettyprint'>
+&lt;img src=&quot;REPLACE_IMG_SRC&quot; &lt;!-- REPLACE HERE --&gt;
+     alt=&quot;Static map image&quot;
+     title=&quot;Click here to activate map&quot;
+     class=&quot;g-map-static&quot;
+     style=&quot;max-width: 600px; max-height: 480px; opacity: 1;&quot;
+     i-frame-src=&quot;https://www.google.com/maps/d/u/0/embed?mid=REPLACE_GMAP_ID&quot;/&gt; &lt;!-- REPLACE HERE --&gt;
+</pre>
+<b>CSS:</b>
+<pre class='prettyprint'>
+iframe.g-map-static{width: 600px;height:480px;}
+</pre>
+<b>JAVSCRIPT:</b>
+<pre class='prettyprint'>
+( function() {
+  var gmaps = document.getElementsByClassName('g-map-static');
+  for (var i = 0; i &lt; gmaps.length; i++) {
+    gmaps[i].addEventListener( "click", iframeSetup, false);
+  };
+
+  function iframeSetup(e) {
+    e.preventDefault();
+    this.removeEventListener('click', iframeSetup, false);
+    var ifrm = document.createElement("iframe");
+    ifrm.setAttribute('class', 'g-map-static');
+    ifrm.style.background = 'url('+this.src+')';
+    ifrm.style.setProperty('background-size', 'contain');
+    ifrm.style.setProperty('background-repeat', 'no-repeat');
+    this.insertAdjacentElement('afterend', ifrm);
+    this.remove();
+    ifrm.setAttribute('src', this.getAttribute('i-frame-src'));
+    return false;
+  }
+} )();
+</pre>
+<b>CUSTOMIZE:</b>
+<p>
+HTML:<br>
+- Manually take a screenshot of the loaded GMaps module. Save the file somewhere the webpage can access (on your server, image hosting site, etc.).<br>
+- <i>REPLACE_IMG_SRC</i> will reference the aforementioned image file.<br>
+- <i>REPLACE_GMAP_ID</i> with google map id, which can be found by opening up the embedded map and looking at the <b>mid</b> query param.<br>
+Ex. 'https://www.google.com/maps/d/u/0/viewer?mid=1jNUEdgWxPGBvh72IurIhcND3SZ0' id is "1jNUEdgWxPGBvh72IurIhcND3SZ0".
+</p>
+<b>EXPLANTION:</b>
+<p>
+Show a placeholder image of what google maps would render. If a user clicks, call for the iframe and replace the image.
+</p>
+<b>EXAMPLE:</b>
+<style>
+iframe.g-map-static{width: 600px;height:480px;}
+</style>
+<button onclick="document.getElementById('slider-2').classList.toggle('closed');">Toggle</button>
+<div id='slider-2' class='closed'>
+	<img src="https://i.imgur.com/SJ1qDpnh.jpg" alt="Static map image" title="Click here to activate map" class="g-map-static" style="max-width: 600px; max-height: 480px; opacity: 1;" i-frame-src="https://www.google.com/maps/d/u/0/embed?mid=1BDdRbcKfh5b1CZCqH-IU-i_-Yn0">
+</div>
+<script>
+( function() {
+  var gmaps = document.getElementsByClassName('g-map-static');
+  for (var i = 0; i < gmaps.length; i++) {
+    gmaps[i].addEventListener( "click", iframeSetup, false);
+  };
+
+  function iframeSetup(e) {
+    e.preventDefault();
+    this.removeEventListener('click', iframeSetup, false);
+    var ifrm = document.createElement("iframe");
+    ifrm.setAttribute('class', 'g-map-static');
+    ifrm.style.background = 'url('+this.src+')';
+    ifrm.style.setProperty('background-size', 'contain');
+    ifrm.style.setProperty('background-repeat', 'no-repeat');
+    this.insertAdjacentElement('afterend', ifrm);
+    this.remove();
+    ifrm.setAttribute('src', this.getAttribute('i-frame-src'));
+    return false;
+  }
+} )();
+</script>
+<hr>
+<p>
+Pretty easy right? I'm sure everyone vistor to your site will thank you for taking a stand and not throwing every bit of js at them that you can muster.
+<small><br><br>P.S. The irony that Google's run_prettify.js is larger than all the written content on this page is not lost on me. At least that is only a loss of 0.007 DOOMs.</small>
+</p>
+<h3>Get Notified of Future Posts</h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length+images.length);
+</script>
+<!-- Begin MailChimp Signup Form -->
+<style type="text/css">
+#mce-EMAIL {width: 40%;}
+#mce-EMAIL, #mc-embedded-subscribe {height: 30px; float: left;}
+#mc-embedded-subscribe {width: 100px; border: none; background-color: #ddd;}
+#mc-embedded-subscribe:hover {color: white; background-color: #333;}
+</style>
+<div id="mc_embed_signup">
+<form action="//packmule.us8.list-manage.com/subscribe/post?u=05df9a2a90aaaa22b906c11d9&amp;id=b7c9b7a5e2" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL", placeholder="Email Address">
+<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_05df9a2a90aaaa22b906c11d9_b7c9b7a5e2" tabindex="-1" value=""></div>
+<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+</div>
+</form>
+</div>
+<br>
+<!--End mc_embed_signup-->
+<h2>Questions</h2>
+<div id="disqus_thread">COMMENTS WILL LOAD HERE</div>
+<script>
+(function () {
+//Modified from: //christianfei.com/posts/how-to-lazy-load-disqus-comments/
+var comments = document.getElementById('disqus_thread'),
+disqusLoaded = false;
+function loadDisqus() {
+(function() {
+var d = document, s = d.createElement('script');
+s.src = 'https://babble-1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})(); disqusLoaded = true;}
+function findTop(obj) {
+var curtop = 0;
+if (obj.offsetParent) {
+do {
+curtop += obj.offsetTop;
+} while (obj = obj.offsetParent);
+return curtop;}}
+// Throttle scroll event: //codepen.io/SitePoint/pen/RRLVAL
+function throttle(fn, wait) {
+var time = Date.now();
+return function() {
+if ((time + wait - Date.now()) < 0) {
+fn();
+time = Date.now();}}}
+if(comments) {
+var commentsOffset = findTop(comments);
+window.addEventListener('scroll', throttle(function() {
+if(!disqusLoaded && window.pageYOffset > commentsOffset - 1000) {
+loadDisqus();}}, 100));}
+} )();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
+</body>
+</html>
