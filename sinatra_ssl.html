@@ -2,7 +2,9 @@
 <head>
 <style>
 body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
-@media screen and (max-width: 800px) {body {width: 90%;}}
+@media screen and (max-width: 1200px) {body {width: 75%;}}
+@media screen and (max-width: 1000px) {body {width: 85%;}}
+@media screen and (max-width: 800px) {body {width: 95%;}}
 h1 {text-align: center; font-size: 2em; margin-top: 50px;}
 h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
 p {text-align: justify; font-size: 1em;}
@@ -17,7 +19,7 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aa
 .unix, b, i {background-color: #eee}
 .unix::before {content: '$ ';}
 .unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
-pre {overflow-wrap: break-word;}
+pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
 </style>
 <title>Sinatra + Reverse Proxy(Lighttpd) + SSL</title>
 <meta name="description" content="A quick guide to getting a secure HTTPS sinatra app for free.">
