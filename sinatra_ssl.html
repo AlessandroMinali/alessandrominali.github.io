@@ -71,13 +71,13 @@ cat privkey.pem cert.pem > ssl.pem
 <p>Lastly we edit our Lighttpd config, again replacing <i>mydomain</i>:</p>
 <pre class="prettyprint">
   $SERVER["socket"] == ":443" {
-  	ssl.engine = "enable"
-  	ssl.pemfile = "/etc/letsencrypt/live/mydomain/ssl.pem"
-  	ssl.ca-file =  "/etc/letsencrypt/live/mydomain/fullchain.pem"
-  	ssl.cipher-list = "ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM"
-  	ssl.honor-cipher-order = "enable"
-  	ssl.use-sslv2 = "disable"
-  	ssl.use-sslv3 = "disable"
+    ssl.engine = "enable"
+    ssl.pemfile = "/etc/letsencrypt/live/mydomain/ssl.pem"
+    ssl.ca-file =  "/etc/letsencrypt/live/mydomain/cert.pem"
+    ssl.cipher-list = "ECDHE-RSA-AES256-SHA384:AES256-SHA256:HIGH:!MD5:!aNULL:!EDH:!AESGCM"
+    ssl.honor-cipher-order = "enable"
+    ssl.use-sslv2 = "disable"
+    ssl.use-sslv3 = "disable"
   }
 </pre>
 <p>Reload Lighttpd:</p>
