@@ -24,9 +24,9 @@ pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap
 .prettyprint{border: 1px solid #dedede;}
 </style>
 <title>
-
+Trouble Shooting Your New Gem (Ruby/Git)
 </title>
-<meta name="description" content="">
+<meta name="description" content="A helpful post about troubleshooting why a fresh local gem seemingly doesn't work.">
 </head>
 <body>
 <ul id="nav">
@@ -36,18 +36,79 @@ pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap
 <li><a href="/contact">Contact</a></li>
 </ul>
 <h1>
-
+Trouble Shooting Your New Gem (Ruby/Git)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Mon 28 Aug 2017
+Wed 28 Mar 2018
 <br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
+<p>
+I found my self making a new gem recently to wrap an api. It's been awhile since I've done gem development. Creating gems has come a long way with it being mostly automagically initialized with <a href="https://bundler.io/v1.16/guides/creating_gem.html">bundler</a> and <a href="http://guides.rubygems.org/make-your-own-gem/">rubygems</a>. They have somewhat standardized gem layout and get you going quickly.
+</p>
+<p>
+After spending a few hours working on the my gem and writing tests via <a href="http://rspec.info">rspec</a> I wanted to use it as if I were a real user. This means installing the gem locally, opening a ruby session and <i>require</i>ing my gem for some smoke testing.
+</p>
+<pre class="prettyprint">
+bundle gem foodie
 
+cd foodie
 
+# add new class in my gem
+echo "module Foodie
+  class Price; end
+end" >> lib/foodie/price.rb
 
+# require it in top level file
+echo -e "require \"foodie/price\"\n$(cat lib/foodie.rb)" > lib/foodie.rb
 
+# edit .gemspec
+sed -i '' '/spec\.[^sm].*TODO/d' foodie.gemspec
+sed -i 's/%q{TODO.*$/"summary"/g' foodie.gemspec
+rm foodie.gemspec-e
 
+# locally install gem
+rake install
+
+# use my gem
+ruby -e 'require "foodie"'
+</pre>
+<h3>Result</h3>
+<pre class='log'>
+Alessandros-MacBook-Air:foodie alessandrominali$ ruby -e 'require "foodie"'
+/Users/alessandrominali/.rvm/rubies/ruby-2.4.1/lib/ruby/site_ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require': cannot load such file -- foodie/price (LoadError)
+	from /Users/alessandrominali/.rvm/rubies/ruby-2.4.1/lib/ruby/site_ruby/2.4.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /Users/alessandrominali/.rvm/gems/ruby-2.4.1/gems/foodie-0.1.0/lib/foodie.rb:1:in `<top (required)>'
+	from /Users/alessandrominali/.rvm/rubies/ruby-2.4.1/lib/ruby/site_ruby/2.4.0/rubygems/core_ext/kernel_require.rb:133:in `require'
+	from /Users/alessandrominali/.rvm/rubies/ruby-2.4.1/lib/ruby/site_ruby/2.4.0/rubygems/core_ext/kernel_require.rb:133:in `rescue in require'
+	from /Users/alessandrominali/.rvm/rubies/ruby-2.4.1/lib/ruby/site_ruby/2.4.0/rubygems/core_ext/kernel_require.rb:40:in `require'
+	from -e:1:in `<main>'
+</pre>
+<p>
+Uh oh...what's happening. All my rspec tests are passing and requiring the right files, why does it suddenly fail here?
+</p>
+<p>
+Can you guess why? Maybe rspec load path is configured more leniently? Do I need to prepend all the files paths with <b>./</b> or should I be using <b>require_relative</b>. Nope, no, and I don't think so. 
+</p>
+<p>
+In all it's auto-generated glory the <b>foodie.gemspec</b> file we are given states that it will be only including files that are tracked via <b>git</b>. It was ignoring all the work I had done since I never committed those files. This is slightly tricky to know and reason about since specs were working.
+</p>
+<pre class="prettyprint linenums:26">
+# foodie.gemspec
+spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+  f.match(%r{^(test|spec|features)/})
+end
+</pre>
+<p>The solution then is quite easy:</p>
+<pre class="prettyprint">
+git add . 
+
+rake install
+
+ruby -e 'require "foodie"'
+</pre>
+<p>Just remember this little necessary detail in the future so that hopefully you can stay productive!
+</p>
 <h3>Get Notified of Future Posts</h3>
 <script>
 var paragraphs = document.getElementsByTagName("p");
