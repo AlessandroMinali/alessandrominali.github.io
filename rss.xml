@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Techno Babble (Alessandro Minali)</title>
+  <description>Technical blog exploring topics of programming, code architecture and project design.</description>
+  <link>https://alessandrominali.github.io</link>
+  <lastBuildDate>Sat 28 Jul 2018</lastBuildDate>
+  <pubDate>Sat 28 Jul 2018</pubDate>
+
+  <item>
+    <title>Tweet for Twitch</title>
+    <description>Twitter bot to shout when you are live streaming</description>
+    <link>https://medium.com/@am_silent0/tweet-for-twitch-60d190cd100d</link>
+    <guid>1</guid>
+    <pubDate>Wed 11 Feb 2015</pubDate>
+  </item>
+
+  <item>
+    <title>Swing Sinatra onto a VPS: A Definitive Tutorial</title>
+    <description>Definitive tutorial to getting your Sinatra app onto a linux server</description>
+    <link>https://medium.com/@am_silent0/swing-sinatra-onto-a-vps-a-definitive-tutorial-899d85e013a1</link>
+    <guid>2</guid>
+    <pubDate>Fri 20 Mar 2015</pubDate>
+  </item>
+
+  <item>
+    <title>Sinatra + Reverse Proxy(Lighttpd) + SSL</title>
+    <description>A quick guide to getting a secure HTTPS sinatra app for free.</description>
+    <link>https://alessandrominali.github.io/sinatra_ssl.html</link>
+    <guid>3</guid>
+    <pubDate>Mon 28 Aug 2017</pubDate>
+  </item>
+
+   <item>
+    <title>Raising a Dead Project Back to Life (Sinatra/PhantomJs)</title>
+    <description>A guide on how programmers deal with old code and projects. Debug stale work and make it run again.</description>
+    <link>https://alessandrominali.github.io/dead_project.html</link>
+    <guid>4</guid>
+    <pubDate>Tue 29 Aug 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Making an App Asynchronous and More (Sinatra/PhantomJs)</title>
+    <description>A guide about using non-blocking async javascript, cleaning up code, and improving speed of an old personal project.</description>
+    <link>https://alessandrominali.github.io/alive_and_async.html</link>
+    <guid>5</guid>
+    <pubDate>Wed 06 Sep 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Building Rack Middleware to Block Malicious Users</title>
+    <description>A guide on how to use custom rack middleware as a protective layer for your apps.</description>
+    <link>https://alessandrominali.github.io/block_malicious_users_with_rack_app.html</link>
+    <guid>6</guid>
+    <pubDate>Fri 08 Sep 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Simply Tracking Your Expenses (UNIX/Bash)</title>
+    <description>A tutorial on creating a simple and minimally useful script to track expenses via command line.</description>
+    <link>https://alessandrominali.github.io/expense_tracker.html</link>
+    <guid>7</guid>
+    <pubDate>Wed 04 Oct 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Reading Time for Technical Blogs (Javascript)</title>
+    <description>A tutorial on creating a simple and minimally useful script to track expenses via command line.</description>
+    <link>https://alessandrominali.github.io/expense_tracker.html</link>
+    <guid>7</guid>
+    <pubDate>Wed 04 Oct 2017</pubDate>
+  </item>
+</channel>
+</rss>
