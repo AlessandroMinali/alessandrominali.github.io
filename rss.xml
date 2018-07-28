@@ -65,10 +65,42 @@
 
   <item>
     <title>Reading Time for Technical Blogs (Javascript)</title>
-    <description>A tutorial on creating a simple and minimally useful script to track expenses via command line.</description>
-    <link>https://alessandrominali.github.io/expense_tracker.html</link>
-    <guid>7</guid>
-    <pubDate>Wed 04 Oct 2017</pubDate>
+    <description>A guide on how to calculate a best estimate of how long a blog entry that covers code will take to read.</description>
+    <link>https://alessandrominali.github.io/reading_time_estimation.html</link>
+    <guid>8</guid>
+    <pubDate>Fri 06 Oct 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Monkey Patching in Ruby - Real World Example</title>
+    <description>A guide walking readers through a real world use case of monkey patching in ruby, dealing with other gems and ORMs.</description>
+    <link>https://alessandrominali.github.io/monkey_patching_real_example.html</link>
+    <guid>9</guid>
+    <pubDate>Mon 09 Oct 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Lower Page Sizes by Defering Junk (Javascript)</title>
+    <description>A guide on not loading a bunch of garbage javascript, goddammit!</description>
+    <link>https://alessandrominali.github.io/defer_resources.html</link>
+    <guid>10</guid>
+    <pubDate>Wed 11 Oct 2017</pubDate>
+  </item>
+
+  <item>
+    <title>Trouble Shooting Your New Gem (Ruby/Git)</title>
+    <description>A helpful post about troubleshooting why a fresh local gem seemingly doesn't work.</description>
+    <link>https://alessandrominali.github.io/bundle_gem.html</link>
+    <guid>11</guid>
+    <pubDate>Wed 28 Mar 2018</pubDate>
+  </item>
+
+  <item>
+    <title>Fighting Back Against Ad-Block Blockers</title>
+    <description>A helpful post on how to block ad blockers.</description>
+    <link>https://alessandrominali.github.io/fuck_ads.html</link>
+    <guid>12</guid>
+    <pubDate>Sat 28 Jul 2018</pubDate>
   </item>
 </channel>
 </rss>
