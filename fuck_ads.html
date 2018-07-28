@@ -36,17 +36,63 @@ Fighting Aggressive Ads
 <li><a href="/contact">Contact</a></li>
 </ul>
 <h1>
-
+The Fight for Ads Online
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Sat 28 Jul 2018
 <br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
+<p>I block ads wherever I can.</p>
+<p>
+They are:<br>
+- Manipulative<br>
+- Invasive<br>
+- A Security Issue<br>
+- etc<br>
+</p>
 
-WIP
-https://beamtic.com/custom-style-sheets
+<p>Sometimes they still sneak past the tools I use. <a href="https://www.rockpapershotgun.com">A site I frequently visit</a> starts begging me to stop blocking ads. <b>EVERY TIME</b> I visit I am stopped with a full page veil and on Safari I can't seem to create a custom rule to block it. The accumulated time wasted dealing with clicking it away is reason enough to purge it.</p>
+<img style="display:block; margin:auto;" src="./assets/rps-blocker.gif" />
 
+<p> To solve this issue I will write targeted CSS to hide stupid full page spam.</p>
+<h3>Step 1: Find the names of the elements you are being spammed with</h3>
+<pre class="prettyprint">
+&lt;!-- Truncated page source --&gt;
+&lt;html data-ublock-blocked=&quot;true&quot; style=&quot;overflow-y: hidden; height: 793px;&quot;&gt;
+&lt;body class=&quot;ads-enabled&quot; style=&quot;overflow-y: hidden; height: 793px;&quot;&gt;
+&lt;div class=&quot;sp_veil1532744272746&quot; style=&quot;display: block&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;sp_message_id1532744272746&quot; class=&quot;sp_message_container1532744272745&quot; style=&quot;display: block;&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>In my case every page visit extra <b>divs</b> where created with <i>class</i> and <i>id</i> attributes appended with <em>random numbers</em> at the end. This means I can't directly select those elements.</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors">Attribute matching</a> allows us to <em>fuzzily</em> select elements. The start of the class is always the same so I will use the prefix matcher</p>
+<pre class="prettyprint">
+div[class^="sp_message_container"] {
+	display: none !important;
+}
+
+div[class^="sp_veil"] {
+	display: none !important;
+}
+</pre>
+<p>They also truncate the page. Even by removing the veils I can't see the full page. I see they assign <b>body</b> <i>height</i>...so let's undo that:</p>
+<pre class="prettyprint">
+body.ads-enabled{
+	height: initial !important;
+	overflow-y: initial !important;
+}
+</pre>
+
+<h3>Step 2: Include Global Style</h3>
+<h4>Safari</h4>
+<code>Safari > Preferences > Advanced > Style sheet: > Other...</code>
+<p>Select your stylesheet and it should immediately take effect. If you make any future edits to the sheet you need to unselect it and reselect from the menu.<small> Or probably a restart of safari will work</small></p>
+<h4>Chrome, Firefox</h4>
+<p><a href="https://beamtic.com/custom-style-sheets">https://beamtic.com/custom-style-sheets</a></p>
+<hr>
+<p>Now go out and enjoy the internet!</p>
 
 <h3>Get Notified of Future Posts</h3>
 <script>
