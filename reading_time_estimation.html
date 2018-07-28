@@ -85,6 +85,8 @@ display.innerHTML = Math.round(count/250+code.length);
 That gives us the result you see at the top of the page! Neat huh?
 </p>
 
+<b>EDIT: I have since increased the the time to TWO minutes per code block. You're welcome!</b>
+
 
 <h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
 <script>
@@ -96,7 +98,7 @@ for(var i = 0; i < paragraphs.length; i++)
 {
     count = count + paragraphs[i].innerHTML.split(" ").length;
 }
-display.innerHTML = Math.round(count/250+code.length);
+display.innerHTML = Math.round(count/250+code.length*2);
 var paragraphs = document.getElementsByTagName("p");
 var display = document.getElementById("time-1");
 var count = 0;
