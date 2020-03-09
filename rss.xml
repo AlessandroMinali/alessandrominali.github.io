@@ -102,5 +102,13 @@
     <guid>12</guid>
     <pubDate>Sat 28 Jul 2018</pubDate>
   </item>
+
+  <item>
+    <title>Updating Let's Encrypt for Lighttpd</title>
+    <description>Blog leading you through updating certbot on a lighttpd server.</description>
+    <link>https://alessandrominali.github.io/lets_encrypt_update.html</link>
+    <guid>13</guid>
+    <pubDate>Mon 09 Mar 2020</pubDate>
+  </item>
 </channel>
 </rss>

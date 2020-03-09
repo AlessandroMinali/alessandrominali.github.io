@@ -9,3 +9,5 @@ Blog for musings while plugged in
 5. spell check
 6. include new item on index page
 7. Update rss
+8. local check
+9. push to publish
