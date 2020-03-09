@@ -60,6 +60,9 @@ get '/' do
 end
 </pre>
 <p>Pretty simple huh? Now we need to make sure we have a valid certificate to actually communicate securely. Thankfully in this day and age it's simple and free. The generous folks at <a href="https://letsencrypt.org">Let's Encrypt</a> want to see every site beefed up. Go to <a href="https://certbot.eff.org">https://certbot.eff.org</a> and select the <b>software</b> and <b>server</b> you are using. In our case <b>software</b> is <i>none of the above</i> and <b>server</b> is <i>...well honestly you should know, cause I have no idea what you are using</i>.</p>
+
+<h3>The following section has been updated for 2020 at the following link: <a href="./lets_encrypt_update.html">Updating Let's Encrypt for Lighttpd</a></h3>
+<strike>
 <p>Follow the instructions in the <b>INSTALL</b> section. Make sure to replace <i>/path/to/my/app</i> and <i>mydomain.com</i> with real values then run this via your terminal: 
 <pre class="unix">sudo certbot certonly --webroot -w /path/to/my/app -d mydomain.com -d www.mydomain.com</pre>
 <p>Now we have our own certificates! Lighttpd expects certs in a single file so let's do that:</p>
@@ -86,6 +89,7 @@ cat privkey.pem cert.pem > ssl.pem
 <p>and we should now be getting HTTPS everywhere!</p>
 <p>Rejoice that we evaded Google's evil gaze for one more day. Next steps should be making sure your cert is always up to date by running this before every 90 days:</p>
 <pre class="unix">certbot renew </pre>
+</strike>
 <p>Good luck out there.</p>
 <h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
 <script>
