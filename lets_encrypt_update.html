@@ -38,7 +38,7 @@ Updating Let's Encrypt for Lighttpd
 <li><a href="/contact">Contact</a></li>
 </ul>
 <h1>
-Lighttpd + SSL(Let'sEncrypt) in (2020)
+Lighttpd + SSL(Let's Encrypt) in 2020
 </h1>
 <p style='font-weight: bold; text-align: right;'>
 Mon 09 Mar 2020
@@ -67,7 +67,7 @@ sudo chown root /usr/local/bin/certbot-auto
 sudo chmod 0755 /usr/local/bin/certbot-auto
 </pre>
 <p>
-Those couple lines are taken directly from Let's Encrypt's <a href="https://certbot.eff.org/lets-encrypt/ubuntuother-other">website</a> which gives up the latest certbot client. Then we kill the server, create a new certificate and setup a <a href="https://en.wikipedia.org/wiki/Cron">cron</a> to automatically renew it.
+Those couple lines are taken directly from Let's Encrypt's <a href="https://certbot.eff.org/lets-encrypt/ubuntuother-other">website</a> which gives us the latest certbot client. Then we kill the server, create a new certificate and setup a <a href="https://en.wikipedia.org/wiki/Cron">cron</a> to automatically renew it.
 </p>
 <pre class="unix">
 fuser -v 80/tcp | cut -f 3 | xargs kill -9
