@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
+  <atom:link href="https://alessandrominali.github.io/rss.xml" rel="self" type="application/rss+xml" />
+
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
