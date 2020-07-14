@@ -4,15 +4,15 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Sat 28 Jul 2018</lastBuildDate>
-  <pubDate>Sat 28 Jul 2018</pubDate>
+  <lastBuildDate>Tue, 14 Jul 2020 00:00:00 +0000</lastBuildDate>
+  <pubDate>Tue, 14 Jul 2020 00:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
     <description>Twitter bot to shout when you are live streaming</description>
     <link>https://medium.com/@am_silent0/tweet-for-twitch-60d190cd100d</link>
     <guid>1</guid>
-    <pubDate>Wed 11 Feb 2015</pubDate>
+    <pubDate>Wed, 11 Feb 2015 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -20,7 +20,7 @@
     <description>Definitive tutorial to getting your Sinatra app onto a linux server</description>
     <link>https://medium.com/@am_silent0/swing-sinatra-onto-a-vps-a-definitive-tutorial-899d85e013a1</link>
     <guid>2</guid>
-    <pubDate>Fri 20 Mar 2015</pubDate>
+    <pubDate>Fri, 20 Mar 2015 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -28,7 +28,7 @@
     <description>A quick guide to getting a secure HTTPS sinatra app for free.</description>
     <link>https://alessandrominali.github.io/sinatra_ssl.html</link>
     <guid>3</guid>
-    <pubDate>Mon 28 Aug 2017</pubDate>
+    <pubDate>Mon, 28 Aug 2017 00:00:00 +0000</pubDate>
   </item>
 
    <item>
@@ -36,7 +36,7 @@
     <description>A guide on how programmers deal with old code and projects. Debug stale work and make it run again.</description>
     <link>https://alessandrominali.github.io/dead_project.html</link>
     <guid>4</guid>
-    <pubDate>Tue 29 Aug 2017</pubDate>
+    <pubDate>Tue, 29 Aug 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -44,7 +44,7 @@
     <description>A guide about using non-blocking async javascript, cleaning up code, and improving speed of an old personal project.</description>
     <link>https://alessandrominali.github.io/alive_and_async.html</link>
     <guid>5</guid>
-    <pubDate>Wed 06 Sep 2017</pubDate>
+    <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -52,7 +52,7 @@
     <description>A guide on how to use custom rack middleware as a protective layer for your apps.</description>
     <link>https://alessandrominali.github.io/block_malicious_users_with_rack_app.html</link>
     <guid>6</guid>
-    <pubDate>Fri 08 Sep 2017</pubDate>
+    <pubDate>Fri, 08 Sep 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -60,7 +60,7 @@
     <description>A tutorial on creating a simple and minimally useful script to track expenses via command line.</description>
     <link>https://alessandrominali.github.io/expense_tracker.html</link>
     <guid>7</guid>
-    <pubDate>Wed 04 Oct 2017</pubDate>
+    <pubDate>Wed, 04 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -68,7 +68,7 @@
     <description>A guide on how to calculate a best estimate of how long a blog entry that covers code will take to read.</description>
     <link>https://alessandrominali.github.io/reading_time_estimation.html</link>
     <guid>8</guid>
-    <pubDate>Fri 06 Oct 2017</pubDate>
+    <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -76,7 +76,7 @@
     <description>A guide walking readers through a real world use case of monkey patching in ruby, dealing with other gems and ORMs.</description>
     <link>https://alessandrominali.github.io/monkey_patching_real_example.html</link>
     <guid>9</guid>
-    <pubDate>Mon 09 Oct 2017</pubDate>
+    <pubDate>Mon, 09 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -84,7 +84,7 @@
     <description>A guide on not loading a bunch of garbage javascript, goddammit!</description>
     <link>https://alessandrominali.github.io/defer_resources.html</link>
     <guid>10</guid>
-    <pubDate>Wed 11 Oct 2017</pubDate>
+    <pubDate>Wed, 11 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -92,7 +92,7 @@
     <description>A helpful post about troubleshooting why a fresh local gem seemingly doesn't work.</description>
     <link>https://alessandrominali.github.io/bundle_gem.html</link>
     <guid>11</guid>
-    <pubDate>Wed 28 Mar 2018</pubDate>
+    <pubDate>Wed, 28 Mar 2018 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -100,7 +100,7 @@
     <description>A helpful post on how to block ad blockers.</description>
     <link>https://alessandrominali.github.io/fuck_ads.html</link>
     <guid>12</guid>
-    <pubDate>Sat 28 Jul 2018</pubDate>
+    <pubDate>Sat, 28 Jul 2018 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -108,7 +108,7 @@
     <description>Blog leading you through updating certbot on a lighttpd server.</description>
     <link>https://alessandrominali.github.io/lets_encrypt_update.html</link>
     <guid>13</guid>
-    <pubDate>Mon 09 Mar 2020</pubDate>
+    <pubDate>Mon, 9 Mar 2020 00:00:00 +0000</pubDate>
   </item>
 
   <item>
@@ -116,7 +116,7 @@
     <description>Helpful guide to test flash sessions in rack apps.</description>
     <link>https://alessandrominali.github.io/testing_rack_flash.html</link>
     <guid>14</guid>
-    <pubDate>Tue 14 Jul 2020</pubDate>
+    <pubDate>Tue, 14 Jul 2020 00:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
