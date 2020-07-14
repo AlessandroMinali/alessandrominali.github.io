@@ -13,7 +13,7 @@
     <title>Tweet for Twitch</title>
     <description>Twitter bot to shout when you are live streaming</description>
     <link>https://medium.com/@am_silent0/tweet-for-twitch-60d190cd100d</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_1</guid>
     <pubDate>Wed, 11 Feb 2015 00:00:00 +0000</pubDate>
   </item>
 
@@ -21,7 +21,7 @@
     <title>Swing Sinatra onto a VPS: A Definitive Tutorial</title>
     <description>Definitive tutorial to getting your Sinatra app onto a linux server</description>
     <link>https://medium.com/@am_silent0/swing-sinatra-onto-a-vps-a-definitive-tutorial-899d85e013a1</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_2</guid>
     <pubDate>Fri, 20 Mar 2015 00:00:00 +0000</pubDate>
   </item>
 
@@ -29,7 +29,7 @@
     <title>Sinatra + Reverse Proxy(Lighttpd) + SSL</title>
     <description>A quick guide to getting a secure HTTPS sinatra app for free.</description>
     <link>https://alessandrominali.github.io/sinatra_ssl.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_3</guid>
     <pubDate>Mon, 28 Aug 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -37,7 +37,7 @@
     <title>Raising a Dead Project Back to Life (Sinatra/PhantomJs)</title>
     <description>A guide on how programmers deal with old code and projects. Debug stale work and make it run again.</description>
     <link>https://alessandrominali.github.io/dead_project.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_4</guid>
     <pubDate>Tue, 29 Aug 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -45,7 +45,7 @@
     <title>Making an App Asynchronous and More (Sinatra/PhantomJs)</title>
     <description>A guide about using non-blocking async javascript, cleaning up code, and improving speed of an old personal project.</description>
     <link>https://alessandrominali.github.io/alive_and_async.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_5</guid>
     <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -53,7 +53,7 @@
     <title>Building Rack Middleware to Block Malicious Users</title>
     <description>A guide on how to use custom rack middleware as a protective layer for your apps.</description>
     <link>https://alessandrominali.github.io/block_malicious_users_with_rack_app.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_6</guid>
     <pubDate>Fri, 08 Sep 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -61,7 +61,7 @@
     <title>Simply Tracking Your Expenses (UNIX/Bash)</title>
     <description>A tutorial on creating a simple and minimally useful script to track expenses via command line.</description>
     <link>https://alessandrominali.github.io/expense_tracker.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_7</guid>
     <pubDate>Wed, 04 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -69,7 +69,7 @@
     <title>Reading Time for Technical Blogs (Javascript)</title>
     <description>A guide on how to calculate a best estimate of how long a blog entry that covers code will take to read.</description>
     <link>https://alessandrominali.github.io/reading_time_estimation.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_8</guid>
     <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -77,7 +77,7 @@
     <title>Monkey Patching in Ruby - Real World Example</title>
     <description>A guide walking readers through a real world use case of monkey patching in ruby, dealing with other gems and ORMs.</description>
     <link>https://alessandrominali.github.io/monkey_patching_real_example.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_9</guid>
     <pubDate>Mon, 09 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -85,7 +85,7 @@
     <title>Lower Page Sizes by Defering Junk (Javascript)</title>
     <description>A guide on not loading a bunch of garbage javascript, goddammit!</description>
     <link>https://alessandrominali.github.io/defer_resources.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_10</guid>
     <pubDate>Wed, 11 Oct 2017 00:00:00 +0000</pubDate>
   </item>
 
@@ -93,7 +93,7 @@
     <title>Trouble Shooting Your New Gem (Ruby/Git)</title>
     <description>A helpful post about troubleshooting why a fresh local gem seemingly doesn't work.</description>
     <link>https://alessandrominali.github.io/bundle_gem.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_11</guid>
     <pubDate>Wed, 28 Mar 2018 00:00:00 +0000</pubDate>
   </item>
 
@@ -101,7 +101,7 @@
     <title>Fighting Back Against Ad-Block Blockers</title>
     <description>A helpful post on how to block ad blockers.</description>
     <link>https://alessandrominali.github.io/fuck_ads.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_12</guid>
     <pubDate>Sat, 28 Jul 2018 00:00:00 +0000</pubDate>
   </item>
 
@@ -109,7 +109,7 @@
     <title>Updating Let's Encrypt for Lighttpd</title>
     <description>Blog leading you through updating certbot on a lighttpd server.</description>
     <link>https://alessandrominali.github.io/lets_encrypt_update.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_13</guid>
     <pubDate>Mon, 9 Mar 2020 00:00:00 +0000</pubDate>
   </item>
 
@@ -117,7 +117,7 @@
     <title>Rspec Helpers: Testing Rack::Flash (Ruby)</title>
     <description>Helpful guide to test flash sessions in rack apps.</description>
     <link>https://alessandrominali.github.io/testing_rack_flash.html</link>
-    <guid isPermaLink="false">techno_babble_</guid>
+    <guid isPermaLink="false">techno_babble_14</guid>
     <pubDate>Tue, 14 Jul 2020 00:00:00 +0000</pubDate>
   </item>
 </channel>
