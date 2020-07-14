@@ -110,5 +110,13 @@
     <guid>13</guid>
     <pubDate>Mon 09 Mar 2020</pubDate>
   </item>
+
+  <item>
+    <title>Rspec Helpers: Testing Rack::Flash (Ruby)</title>
+    <description>Helpful guide to test flash sessions in rack apps.</description>
+    <link>https://alessandrominali.github.io/testing_rack_flash.html</link>
+    <guid>14</guid>
+    <pubDate>Tue 14 Jul 2020</pubDate>
+  </item>
 </channel>
 </rss>

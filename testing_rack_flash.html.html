@@ -1,0 +1,217 @@
+<html>
+<head>
+<link rel="alternate" type="application/rss+xml" title="Alessandro Minali's Babble" href="https://alessandrominali.github.io/rss.xml" />
+<style>
+body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
+@media screen and (max-width: 1200px) {body {width: 75%;}}
+@media screen and (max-width: 1000px) {body {width: 85%;}}
+@media screen and (max-width: 800px) {body {width: 95%;}}
+h1 {text-align: center; font-size: 2em; margin-top: 50px;}
+h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
+p {text-align: justify; font-size: 1em;}
+dl {margin: 50px 50px 20px 50px; padding: 0;}
+dt {font-weight: bold; float: left; width: 30%; padding: 0; margin: 0;}
+dd {padding-left: 23%;}
+a {text-decoration: underline; font-weight: normal; color: #555555;}
+a:hover {color: white; background-color: #333}
+ul {list-style-type: none; display: block; height: 1em; text-align: center; margin: 25px 0px; padding: 0; clear: both;}
+#nav>li {display: inline; padding: 0px 20px; font-weight: bold;}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aaa; list-style-type: decimal !important;}
+.unix, b, i {background-color: #eee}
+.unix::before {content: '$ ';}
+.unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
+.log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
+pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
+.prettyprint{border: 1px solid #dedede;}
+</style>
+<title>
+Rspec Helpers: Testing Rack::Flash (Ruby)
+</title>
+<meta name="description" content="Helpful guide to test flash sessions in rack apps.">
+</head>
+<body>
+<ul id="nav">
+<li><a href="/">More Babble</a></li>
+<li></li>
+<li></li>
+<li><a href="/contact">Contact</a></li>
+</ul>
+<h1>
+Rspec Helpers: Testing Rack::Flash (Ruby)
+</h1>
+<p style='font-weight: bold; text-align: right;'>
+Tue 14 Jul 2020
+<br>
+Reading time: (<span id='time'>~</span> mins)
+</p>
+<p><a href="https://github.com/rspec/rspec">Rspec</a> is one of the libraries that really shows off how fun ruby is. An elegant <a href="https://thoughtbot.com/blog/writing-a-domain-specific-language-in-ruby">DSL</a> for testing that is a joy to use. Unfortunately user sessions can be a pain to test so I'll show you how to easily make specs for <b>flash messages</b> in your <a href="https://github.com/rack/rack">Rack</a> apps.</p>
+
+<p>We have a simple <a href="http://sinatrarb.com">Sinatra</a> app with three routes. <b>/flash</b> redirects and sets a flash message, which is what we want to verify with our tests</p>
+<pre class="prettyprint">
+# my_app.rb
+require 'sinatra'
+require 'rack-flash'
+class MyApp < Sinatra::Base
+  enable :sessions # need this for flash to work
+  use Rack::Flash
+
+  get '/' do
+    "Hello World. &lt;a href='/flash'&gt;Test Rack::Flash&lt;/a&gt;"
+  end
+
+  get '/flash' do
+    flash[:success] = 'Flashed!' # set the flash message we want
+    redirect '/flash/message'
+  end
+
+  get '/flash/message' do
+    "Here is your flash message: #{flash[:success]}" # display flash
+  end
+end
+</pre>
+
+<p>Before writing the tests we setup a spec helper to load our testing tools and environment, which includes RSpec and <a href="https://github.com/rack/rack-test">Rack::Test</a>:</p>
+<pre class="prettyprint">
+# spec/spec_helper.rb
+ENV['APP_ENV'] = 'test'
+
+require_relative '../my_app.rb'
+require 'rspec'
+require 'rack/test'
+
+module RSpecMixin
+  include Rack::Test::Methods # loads in rack/test methods
+
+  def app; described_class; end # tells rspec where our app is
+
+  def flash # the secret sauce
+    response
+    last_request.env['x-rack.flash']
+  end
+end
+
+RSpec.configure do |config|
+  config.include RSpecMixin # include our settings into RSpec
+end
+</pre>
+
+<pre class="prettyprint">
+# spec/my_app_spec.rb
+require 'spec_helper'
+describe MyApp do
+  context '/' do
+    let!(:response) { get '/' } # Rack::Test let us do this
+
+    it "says hello" do
+      expect(last_response.body).to include 'Hello World'
+    end
+  end
+
+  context '/flash' do
+    let(:response) { get '/flash' }
+
+    it 'sets flash success' do
+      expect(flash[:success]).to eq 'Flashed!' # TADA!
+    end
+  end
+
+  context '/flash/success' do
+    let(:response) { get '/flash/message' }
+
+    it 'does not show flash when accessed directly' do
+      expect(flash[:success]).to be_nil # further testing
+    end
+  end
+end
+</pre>
+
+And for completeness here is the <b>Gemfile</b> and <b>config.ru</b> for this little project:
+<pre class="prettyprint">
+# Gemfile
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'rack-flash3'
+group :test do
+  gem 'rack-test'
+  gem 'rspec'
+end  
+
+# config.ru
+require_relative 'my_app.rb'
+run MyApp
+</pre>
+
+<p>Hopefully this helps you with your testing. Seems like a lot of people were scratching their heads about it when I tried to google solutions.</p>
+
+<p>Enjoy!</p>
+<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length*2+images.length);
+</script>
+<!-- Begin MailChimp Signup Form -->
+<style type="text/css">
+#mce-EMAIL {width: 40%;}
+#mce-EMAIL, #mc-embedded-subscribe {height: 30px; float: left;}
+#mc-embedded-subscribe {width: 100px; border: none; background-color: #ddd;}
+#mc-embedded-subscribe:hover {color: white; background-color: #333;}
+</style>
+<div id="mc_embed_signup">
+<form action="//packmule.us8.list-manage.com/subscribe/post?u=05df9a2a90aaaa22b906c11d9&amp;id=b7c9b7a5e2" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL", placeholder="Email Address">
+<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_05df9a2a90aaaa22b906c11d9_b7c9b7a5e2" tabindex="-1" value=""></div>
+<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+</div>
+</form>
+</div>
+<br>
+<!--End mc_embed_signup-->
+<h2>Questions</h2>
+<div id="disqus_thread">COMMENTS WILL LOAD HERE</div>
+<script>
+(function () {
+//Modified from: //christianfei.com/posts/how-to-lazy-load-disqus-comments/
+var comments = document.getElementById('disqus_thread'),
+disqusLoaded = false;
+function loadDisqus() {
+(function() {
+var d = document, s = d.createElement('script');
+s.src = 'https://babble-1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})(); disqusLoaded = true;}
+function findTop(obj) {
+var curtop = 0;
+if (obj.offsetParent) {
+do {
+curtop += obj.offsetTop;
+} while (obj = obj.offsetParent);
+return curtop;}}
+// Throttle scroll event: //codepen.io/SitePoint/pen/RRLVAL
+function throttle(fn, wait) {
+var time = Date.now();
+return function() {
+if ((time + wait - Date.now()) < 0) {
+fn();
+time = Date.now();}}}
+if(comments) {
+var commentsOffset = findTop(comments);
+window.addEventListener('scroll', throttle(function() {
+if(!disqusLoaded && window.pageYOffset > commentsOffset - 1000) {
+loadDisqus();}}, 100));}
+} )();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
+</body>
+</html>
