@@ -23,11 +23,12 @@ li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aa
 .log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
 pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
 .prettyprint:not(.linenums){padding: 5px 10px;}
+small{font-size:10px;}
 </style>
 <title>
-
+Removing Disqus
 </title>
-<meta name="description" content="">
+<meta name="description" content="Making webpages load faster by removing cruft.">
 </head>
 <body>
 <ul id="nav">
@@ -37,18 +38,30 @@ pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap
 <li><a href="https://packmule.ca/contact/">Contact</a></li>
 </ul>
 <h1>
-
+Removing Disqus
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Mon 28 Aug 2017
+Wed 15 Jul 2020
 <br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
+<p>I like webpages that load fast. Especially when we are talking about pages that are just blocks of text. I try and make my personal projects adhere to what I would like to see across the web. I previously talked about this in <a href="/defer_resources.html">Lower Page Sizes by Deferring Junk</a>.</p>
 
+<p>
+Users don't want to wait for content. They don't to be frustrated by paint reflow. They don't want to download MB's worth of trash.
+</p>
 
+<p>In that spirit I am removing <a href="https://disqus.com">Disqus</a> from all my personal projects. Currently I barely get any comments so it really is wasting user time and data limits, but I already have a great way for people to interact with me. It's something amazing you might have heard of called <a href="https://en.wikipedia.org/wiki/Email">email</a>.</p>
 
-
-
+<h3>Benefits of removing Disqus:</h3>
+- 1kb <span style='color:green'>less</span> from each html request for my pages</li></br>
+- 36 lines <span style='color:green'>less</span> of complexity I don't own</li></br>
+- 24 requests <span style='color:green'>less</span> per page</li></br>
+- 1.01 MB <span style='color:green'>less</span> loaded per page<small>, which is an order of magnitude greater than the actual content</small></li></br>
+- <span style='color:green'>No user tracking</span> by disqus, google, and facebook and who knows what other 3rd parties</li></br>
+- <span style='color:green'>No user sign up</span>, just use the email you already have.</li></br>
+</ul>
+<p>Enjoy.</p>
 <h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
 <script>
 var paragraphs = document.getElementsByTagName("p");
@@ -82,7 +95,7 @@ display.innerHTML = Math.round(count/250+code.length*2+images.length);
 <br>
 <br>
 <hr>
-<h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/?message=https://alessandrominali.github.io/removing_disqus.html">contact me anytime</a> :)</h3>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
 </body>
 </html>

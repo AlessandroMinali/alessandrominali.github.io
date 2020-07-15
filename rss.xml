@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Tue, 14 Jul 2020 00:00:00 +0000</lastBuildDate>
-  <pubDate>Tue, 14 Jul 2020 00:00:00 +0000</pubDate>
+  <lastBuildDate>Wed, 15 Jul 2020 00:00:00 +0000</lastBuildDate>
+  <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -82,7 +82,7 @@
   </item>
 
   <item>
-    <title>Lower Page Sizes by Defering Junk (Javascript)</title>
+    <title>Lower Page Sizes by Deferring Junk (Javascript)</title>
     <description>A guide on not loading a bunch of garbage javascript, goddammit!</description>
     <link>https://alessandrominali.github.io/defer_resources.html</link>
     <guid isPermaLink="false">techno_babble_10</guid>
@@ -119,6 +119,14 @@
     <link>https://alessandrominali.github.io/testing_rack_flash.html</link>
     <guid isPermaLink="false">techno_babble_14</guid>
     <pubDate>Tue, 14 Jul 2020 00:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>Removing Disqus (Javascript)</title>
+    <description>Making webpages load faster by removing cruft.</description>
+    <link>https://alessandrominali.github.io/removing_disqus.html</link>
+    <guid isPermaLink="false">techno_babble_15</guid>
+    <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
