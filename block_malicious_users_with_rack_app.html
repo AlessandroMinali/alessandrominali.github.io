@@ -25,9 +25,8 @@ pre code.add span {color:green !important;}
 pre code.add::before {content:'+ '; color:green}  
 pre code.sub span {color:red !important;}
 pre code.sub::before {content:'- '; color:red}
-.diff .linenums{padding:0;}
-.diff li {list-style-type: none !important;}
 .log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
+.prettyprint:not(.linenums){padding: 5px 10px;}
 </style>
 <title>
 How to Use Custom Rack Middleware to Block Malicious Users
@@ -75,68 +74,68 @@ end
 use Rack::Smack
 </pre>
 <p>into my middleware stack every response will be blocked! That technically satisfies my condition but obviously I want to allow legitimate traffic through. I will search the request path for suspicious keywords, if found I'll terminate request processing else I will send the request forward to the rest of my application:</p>
-<pre class='prettyprint linenums diff'>
-module Rack
-  class Smack
-<code class='add'>  BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
+<pre class='prettyprint'>
+  module Rack
+    class Smack
+<code class='add'>    BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
 
-</code>    def initialize(app)
-<code class='add'>    @app = app</code>
-    end
+</code>      def initialize(app)
+<code class='add'>      @app = app</code>
+      end
 
-    def call(env)
-<code class='sub'>    [403, { 'Content-Type' => 'text/html' }, ['Banned.']]</code>
-<code class='add'>    @req = Rack::Request.new(env)
-    return smack if BLOCKED.any? { |block| @req.path.index(block) }
-    @app.call(env)</code>
+      def call(env)
+<code class='sub'>      [403, { 'Content-Type' => 'text/html' }, ['Banned.']]</code>
+<code class='add'>      @req = Rack::Request.new(env)
+        return smack if BLOCKED.any? { |block| @req.path.index(block) }
+        @app.call(env)</code>
+      end
+
+<code class='add'>    def smack
+        [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+      end</code>
     end
-<code class='add'>
-  def smack
-    [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
-  end</code>
   end
-end
 </pre>
 
 <p>I define an array of strings, that I would like to ban, in the <b>BLOCKED</b> variable. In <i>:initialize</i> I take the app parameter and store it in an instance var so if I want I can pass it on for further processing. In <i>:call</i> I take advantage of <a href='http://www.rubydoc.info/gems/rack/Rack/Request'>Rack::Request</a> which makes it easier to deal with the Rack environment. Like I said before, I'll search the request path against my blocked strings and if it matches match I'll send them to <i>:smack</i> which will end processing and give them a <a href='https://en.wikipedia.org/wiki/HTTP_403'>403</a>. If no match is made <i>@app.call(env)</i> exits this middleware and passes processing forward to the next app in the stack. Neat!</p>
 
 <p>Right now 'banning' is stateless. My app will not remember that someone was banned and they can keep accessing the rest of my site as if nothing happened. I need to persist the banned state for malicious users and wholly block them from all my content. To do this I'll use a flat file to store offenders. I originally used the <a href="http://ruby-doc.org/stdlib/libdoc/csv/rdoc/CSV.html">CSV library</a> but normal file IO is <b>waaay</b> faster for our purposes. Anyways here we go:</p>
-<pre class='prettyprint linenums diff'>
-module Rack
-  class Smack
-    BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
-<code class='add'>  FILENAME = './banlist.txt'.freeze</code>
+<pre class='prettyprint'>
+  module Rack
+    class Smack
+      BLOCKED  = %w[wp wordpress xmlrpc sfn].freeze
+<code class='add'>    FILENAME = './banlist.txt'.freeze</code>
 
-    def initialize(app)
-      @app = app
-<code class='add'>    IO.write(FILENAME, '') unless ::File.file?(FILENAME)</code>
-    end
+      def initialize(app)
+        @app = app
+<code class='add'>      IO.write(FILENAME, '') unless ::File.file?(FILENAME)</code>
+      end
 
-    def call(env)
-      @req = Rack::Request.new(env)
-<code class='sub'>    return smack if BLOCKED.any? { |block| @req.path.index(block) }</code>
-<code class='add'>    return smack if banned?
-    return ban!  if BLOCKED.any? { |block| @req.path.index(block) }</code>
-      @app.call(env)
+      def call(env)
+        @req = Rack::Request.new(env)
+<code class='sub'>      return smack if BLOCKED.any? { |block| @req.path.index(block) }</code>
+<code class='add'>      return smack if banned?
+        return ban!  if BLOCKED.any? { |block| @req.path.index(block) }</code>
+        @app.call(env)
+      end
+
+<code class='add'>    def ban!
+        IO.write(FILENAME, "#{@req.ip},#{@req.path},#{Time.now}\n", mode: 'a')
+        smack
+      end
+
+      def banned?
+        IO.foreach(FILENAME) do |row|
+          return true if row.split(',')[0] == @req.ip
+        end
+        false
+      end</code>
+
+      def smack
+        [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
+      end
     end
-<code class='add'>
-  def ban!
-    IO.write(FILENAME, "#{@req.ip},#{@req.path},#{Time.now}\n", mode: 'a')
-    smack
   end
-
-  def banned?
-    IO.foreach(FILENAME) do |row|
-      return true if row.split(',')[0] == @req.ip
-    end
-    false
-  end
-
-</code>    def smack
-      [403, { 'Content-Type' => 'text/html' }, ['Banned.']]
-    end
-  end
-end
 </pre>
 <p>We add a <b>FILENAME</b> constant and then in <i>:initialize</i> I attempt to create the file that will store our banned users unless it already exists. In <i>:call</i> the first thing I check is if they are <i>:banned?</i>. This new method <a href='https://stackoverflow.com/a/25189286'>efficiently reads</a> our ban list and checks if the current user's ip matches a banned ip and if so <i>:smack</i> will make sure all further processing never happens. Otherwise we move on to check what is being requested. If the request contains a malicious keyword then we make sure to take note with <i>:ban!</i>. This method writes the user's ip with some other information to the log and then <i>:smack</i>s them out! Any future visits for that user will now terminate above when they are searched in the file. In the case that the request is not suspicious the next middleware is called, and everything moves along as normal. This gives me exactly the behaviour I need to catch and deny malicious users! Here is the final code that I use on production for my apps:</p>
 <pre class='prettyprint linenums'>

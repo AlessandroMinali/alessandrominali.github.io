@@ -25,8 +25,7 @@ pre code.add span {color:green !important;}
 pre code.add::before {content:'+ '; color:green}  
 pre code.sub span {color:red !important;}
 pre code.sub::before {content:'- '; color:red}
-.diff .linenums{padding:0;}
-.diff li {list-style-type: none !important;}
+.prettyprint:not(.linenums){padding: 5px 10px;}
 </style>
 <title>
 Making an App Asynchronous and More (Sinatra/PhantomJs)
@@ -55,28 +54,25 @@ Reading time: (<span id='time'>~</span> mins)
 <p>in your apps directory will check your code for common mistakes and automatically fix most of them! You can then manually dive in for the nasty ones that were uncovered. This is especially useful for code consistency on large projects or when programming with others.</p>
 <p>Now the refactoring begins! <a href='https://github.com/AlessandroMinali/snappy/tree/0296c4daafbdd81be6944651998225b5e0fbf368'>Here is the repo in the state at which I began to make these changes if you want to follow along.</a> I let rubocop do its thing which ends up fixing a tons of small code smells all across the project. The first part of code that I want to tackle myself is the <i>caching</i> logic. It looked very confusing and I can do a better job at making it more obvious of what it's actually accomplishing.</p>
 File: snappy.rb
-<pre class='prettyprint linenums diff'>
-<code class='sub'>  def cached? image
+<pre class='prettyprint'>
+<code class='sub'>def cached? image
     s = Snapshot.first(:name => image)
     if s
       if s.updated_at.to_time < Time.now - 1 * 60
-
         snap @image, params[:url], '1440', '900'
-
         snap '2' + @image, params[:url], '640', '960', true
-
         s.updated_at = Time.now
         s.save
       end</code>
-<code class='add'>  def cached?(image)
+<code class='add'>def cached?(image)
     screen_shot = Snapshot.first(name: image)
     if screen_shot
       refresh_snap(screen_shot)  
-</code>        true
-<code class='add'>    else
+</code>      true
+<code class='add'>  else
       false
-</code>      end
-    end
+</code>    end
+  end
 </pre>
 <p>Pretty obvious beginner signs of useless variables names, unnecessary nesting of conditionals, and not returning proper values based on the expected behaviour of methods ending with <i>?</i>.</p>
 <p>Instead of using the mysterious <i>s</i> variable I'll be more explicit and use <i>screenshot</i>. It immediately becomes more readable when using it as a conditional expression! <i>:cached?</i> doesn't need to worry about what to do with the screenshot so I move that out into a new method, <i>:refresh_snap</i>. Much cleaner now and returning boolean values as would be expected.</p>
@@ -93,51 +89,50 @@ File: snappy.rb
 </pre>
 <p>I would like to clean up <i>:snap</i> to make it more readable. Rubocop helps me out by changing the <i>{...}</i> block into a <i>do...end</i> block and I fix a bit more styling by collapsing the <i>Phantonjs.run</i> params into a single line. The last tweak is again to use a guard clause instead of the clunky <i>if</i> block for timeouts:</p>
 File: snappy.rb
-<pre class='prettyprint linenums diff'>
-<code class='sub'>    Phantomjs.run(
-      './public/script/peek.js',
-      url,
-      x,
-      y,
-      "./public/#{name}.png",
-      agent,
-    ) { |k|
-        p k
-        if k.chomp.include? 'timeout'
-          redirect to('/timeout')
-          return
-        end
-        store @image if k.chomp.include? 'done'
-    }</code>
-<code class='add'>    Phantomjs.run('./public/script/peek.js', url, x, y, "./public/#{name}.png", agent) do |k|
-      return redirect to('/timeout') if k.chomp.include? 'timeout'
-      store @image if k.chomp.include? 'done'
-    end</code>
+<pre class='prettyprint'>
+<code class='sub'>Phantomjs.run(
+    './public/script/peek.js',
+    url,
+    x,
+    y,
+    "./public/#{name}.png",
+    agent,
+  ) { |k|
+    p k
+    if k.chomp.include? 'timeout'
+      redirect to('/timeout')
+      return
+    end
+    store @image if k.chomp.include? 'done'}</code>
+<code class='add'>Phantomjs.run('./public/script/peek.js', url, x, y, "./public/#{name}.png", agent) do |k|
+    return redirect to('/timeout') if k.chomp.include? 'timeout'
+    store @image if k.chomp.include? 'done'
+  end</code>
 </pre>
 <p>Moving further down the next stink is the <i>after</i> block. This will occur after each request and delete stale photos. The easy cleanup here is to precompute the time that I want to use to make a decision and use proper variable names:</p>
 File: snappy.rb
-<pre class='prettyprint linenums diff'>
+<pre class='prettyprint'>
   after do
 <code class='sub'>  s = Snapshot.all :created_at.lt => Time.now - 2 * 60 * 60 * 24 * 7
-  JSON.parse(s.to_json).each { |s|
+    JSON.parse(s.to_json).each { |s|
     File.delete "./public/#{s['name']}.png"</code>
 <code class='add'>  images = Snapshot.all :created_at.lt => Time.now - 1_209_600
-  JSON.parse(images.to_json).each do |image|</code>
-      begin
-<code class='sub'>      File.delete "./public/2#{s['name']}.png"</code>
-<code class='add'>      File.delete "./public/#{image['name']}.png"
+    JSON.parse(images.to_json).each do |image|</code>
+    begin
+<code class='sub'>    File.delete "./public/2#{s['name']}.png"</code>
+<code class='add'>    File.delete "./public/#{image['name']}.png"
       File.delete "./public/2#{image['name']}.png"</code>
-      rescue
-        'file not found'
-      end
+    rescue
+      'file not found'
+    end
 <code class='sub'>  }
-  s.destroy</code>
+    s.destroy</code>
 <code class='add'>  end
-  images.destroy</code>
+    images.destroy</code>
   end
 </pre>
 <p>Next is a cleanup to hide the Sinatra error message from end users. There is no reason they need to see the guts of the app, and for me it's easy enough to dive into the Heroku logs to find problems:</p>
-<pre class='prettyprint linenums diff'>
+<pre class='prettyprint'>
   error do
 <code class='sub'>  halt 500, 'Sorry there was a nasty error - ' + env['sinatra.error'].message</code>
 <code class='add'>  halt 500, 'Sorry there was a nasty error'</code>
