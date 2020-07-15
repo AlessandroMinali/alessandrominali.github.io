@@ -220,42 +220,11 @@ display.innerHTML = Math.round(count/250+code.length*2);
 </div>
 </form>
 </div>
-<br>
 <!--End mc_embed_signup-->
-<h2>Questions</h2>
-<div id="disqus_thread">COMMENTS WILL LOAD HERE</div>
-<script>
-//Modified from: //christianfei.com/posts/how-to-lazy-load-disqus-comments/
-var comments = document.getElementById('disqus_thread'),
-disqusLoaded = false;
-function loadDisqus() {
-(function() {
-var d = document, s = d.createElement('script');
-s.src = 'https://babble-1.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})(); disqusLoaded = true;}
-function findTop(obj) {
-var curtop = 0;
-if (obj.offsetParent) {
-do {
-curtop += obj.offsetTop;
-} while (obj = obj.offsetParent);
-return curtop;}}
-// Throttle scroll event: //codepen.io/SitePoint/pen/RRLVAL
-function throttle(fn, wait) {
-var time = Date.now();
-return function() {
-if ((time + wait - Date.now()) < 0) {
-fn();
-time = Date.now();}}}
-if(comments) {
-var commentsOffset = findTop(comments);
-window.addEventListener('scroll', throttle(function() {
-if(!disqusLoaded && window.pageYOffset > commentsOffset - 1000) {
-loadDisqus();}}, 100));}
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<br>
+<br>
+<hr>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/?message=How to Use Custom Rack Middleware to Block Malicious Users">contact me anytime</a> :)</h3>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
 </body>
 </html>
