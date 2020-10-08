@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Thu 08 Oct 2020 00:00:00 +0000</lastBuildDate>
-  <pubDate>Thu 08 Oct 2020 00:00:00 +0000</pubDate>
+  <lastBuildDate>Thu 08 Oct 2020 15:00:00 +0000</lastBuildDate>
+  <pubDate>Thu 08 Oct 2020 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -130,11 +130,11 @@
   </item>
 
   <item>
-    <title>Explaining a Mice-Framework (Ruby)</title>
+    <title>Explaining a Micro-Framework (Ruby)</title>
     <description>A tutorial series showing you how the web framework rum works.</description>
     <link>https://alessandrominali.github.io/explain-a-framework.html</link>
     <guid isPermaLink="false">techno_babble_16</guid>
-    <pubDate>Thu 08 Oct 2020 00:00:00 +0000</pubDate>
+    <pubDate>Thu 08 Oct 2020 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
