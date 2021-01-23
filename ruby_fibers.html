@@ -1,0 +1,169 @@
+<html>
+<head>
+<link rel="alternate" type="application/rss+xml" title="Alessandro Minali's Babble" href="https://alessandrominali.github.io/rss.xml" />
+<style>
+body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
+@media screen and (max-width: 1200px) {body {width: 75%;}}
+@media screen and (max-width: 1000px) {body {width: 85%;}}
+@media screen and (max-width: 800px) {body {width: 95%;}}
+h1 {text-align: center; font-size: 2em; margin-top: 50px;}
+h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
+p {text-align: justify; font-size: 1em;}
+dl {margin: 50px 50px 20px 50px; padding: 0;}
+dt {font-weight: bold; float: left; width: 30%; padding: 0; margin: 0;}
+dd {padding-left: 23%;}
+a {text-decoration: underline; font-weight: normal; color: #555555;}
+a:hover {color: white; background-color: #333}
+ul {list-style-type: none; display: block; height: 1em; text-align: center; margin: 25px 0px; padding: 0; clear: both;}
+#nav>li {display: inline; padding: 0px 20px; font-weight: bold;}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aaa; list-style-type: decimal !important;}
+.unix, b, i {background-color: #eee}
+.unix::before {content: '$ ';}
+.unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
+.log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
+pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
+pre code.add span {color:green !important;}
+pre code.add::before {content:'+ '; color:green}  
+pre code.sub span {color:red !important;}
+pre code.sub::before {content:'- '; color:red}
+.prettyprint:not(.linenums){padding: 5px 10px;}
+</style>
+<title>
+Fibers are Amazing (Ruby)
+</title>
+<meta name="description" content="A discussion of Fibers in the new 3.0 release of ruby.">
+</head>
+<body>
+<ul id="nav">
+<li><a href="/">More Babble</a></li>
+<li></li>
+<li></li>
+<li><a href="https://packmule.ca/contact/">Contact</a></li>
+</ul>
+<h1>
+Fibers are Amazing (Ruby)
+</h1>
+<p style='font-weight: bold; text-align: right;'>
+Fri 22 Jan 2021
+<br>
+Reading time: (<span id='time'>~</span> mins)
+</p>
+
+<p>With the recent release of <a href='https://www.ruby-lang.org/en/news/2020/12/25/ruby-3-0-0-released/'>Ruby 3</a> I was looking forward to playing around with the new concurrency primitive, <a href='https://github.com/ruby/ruby/blob/master/doc/ractor.md'>Ractors</a>. As luck would have it the release notes mentioned another concurrency addition in the release called "Fiber Scheduler". This led me down a wonderful rabbit hole and completely distracted me from ever writing a single line of Ractor code.</p>
+
+<p>Here is a small project of mine that gets a 6x speed up using <a href='https://ruby-doc.org/core-3.0.0/Fiber.html'><i>Fibers</i></a> with a <a href='https://github.com/AlessandroMinali/tv-shows/commit/24b59db56da6610c5dfb700f971f47f6fbf8e020#diff-9747531cb0bbe249cf60b3c4fedeac374dbac949094765776f21242eed24e868'>4 line code change</a>:</p>
+<pre class='prettyprint'>
+links = {}
+count = 0
+shows = # list of show objects
+
+<code class='add'>scheduler = Scheduler.new
+Fiber.set_scheduler scheduler
+</code>
+
+shows.each_with_index do |s|
+<code class='sub'>begin</code>
+<code class='add'>Fiber.schedule do</code>
+    res = Net::HTTP.get_response(URI(s.url))
+    ...
+    if # new episodes released
+      links[count] = s
+      count += 1
+    end
+    ...
+  rescue
+    p "Failed: #{s.title}"
+  end
+end
+
+<code class='add'>scheduler.run</code>
+
+...
+</pre>
+
+<p>The code essentially makes 20+ http requests to <a href='https://www.wikipedia.org'>Wikipedia</a> and then parses the response with <a href='https://nokogiri.org'>Nokogiri</a> to check if episodes number has changed since last visit. An important note here is that using <i><a href='https://ruby-doc.org/core-3.0.0/Thread.html'>Thread</a></i> or <i><a href='https://ruby-doc.org/core-2.6.3/Process.html#method-c-fork'>fork</a></i> here would not work without significant code change due to shared variables <i>count</i> and <i>links</i>.</p>
+
+<p>Parallelism is quite complicated in Ruby. It is almost impossible to achieve via threads due to the <a href='https://en.wikipedia.org/wiki/Global_interpreter_lock'>GVL</a> which usually forces only one thread to run at a time. Threads are notoriously hard to get right as locks are needed to access shared state. Another option is process level parallelism which is inherently safer due to separate memory spaces but forking has a high cost and benefits only when you have many physical cores to back it up.
+</p>
+
+<p>
+In comes <i>Fiber</i> to save the day, a stack-based concurrency primitive. They are by-far the <a href='https://www.codeotaku.com/journal/2018-11/fibers-are-the-right-solution/context-switching'>lightest primitive</a>, implemented as functions that have the ability to <a href='https://ruby-doc.org/core-3.0.0/Fiber.html#method-c-yield'><i>yield</i></a>/<a href='https://ruby-doc.org/core-3.0.0/Fiber.html#method-i-resume'><i>resume</i></a> as you see fit. Through the exhaustive effort of <a href='https://bugs.ruby-lang.org/issues/16786'>Samuel William and friends</a>, <i>Thread</i> and <i>Fiber</i> in ruby have been getting lots of love lately. Samuel has introduced a simple <a href='https://ruby-doc.org/core-3.0.0/Fiber/SchedulerInterface.html'>Fiber::SchedulerInterface</a> that allows you to quickly make a program concurrent for any blocking I/O. So only thing that a developer does have to worry about is creating hooks for all I/O actions so that her <i>Fiber</i> can transfer control before blocking the whole program.</p>
+
+<p>Alright, here is another little toy example:</p>
+<pre class='prettyprint'>
+def task(n)
+  puts "Starting task #{n}"
+  sleep(1) # I/O blocking work
+  puts "Finishing task #{n}"
+end
+
+# Synchronous
+3.times do |n|
+  task(n)
+end
+# takes 3 seconds to complete
+
+# Asynchronous with Fibers
+scheduler = MyScheduler.new
+Fiber.set_scheduler(scheduler)
+
+3.times do |n|
+  Fiber.schedule do
+    task(n)
+  end
+end
+
+scheduler.run
+# takes ~1 seconds to complete
+</pre>
+
+<p>The hidden benefit here, aside from the obvious concurrency is that each Fiber is controlled by your scheduler and only yields on blocking I/O. This removes a whole class of thread issues that occur because of pre-emption and unpredictable access to shared state. <b>Fibers are essentially a drop-in form of concurrency with no extra work from the developer.</b></p>
+
+<p>There is an <a href='https://github.com/ruby/ruby/blob/master/test/fiber/scheduler.rb'>example scheduler on the main ruby repo</a> that you can essentially copy and paste and start using right away. Unfortunately as of writing this, there is currently an error with the code they provide so instead use the <a href='https://gist.github.com/AlessandroMinali/850472e683fc0e5ebf80e4dd2755b566#file-scheduler-rb'>corrected version from here</a>, as well as a <a href='https://gist.github.com/AlessandroMinali/850472e683fc0e5ebf80e4dd2755b566#file-http-rb'>corrected sample test file</a>. <i><b>Note:</b> <i>this scheduler depends on <a href='https://ruby-doc.org/core-3.0.0/IO.html#method-c-select'><i>IO.select</i></a> which only supports 1024 open files at a time. A production grade solution would probably want to use <a href='https://man7.org/linux/man-pages/man7/epoll.7.html'>epoll</a> or <a href='https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/kqueue.2.html'>kqueue</a> instead.</i></p>
+
+<p>If you are interested in way more information on fibers check out these links:</p>
+<li><a href="https://www.youtube.com/watch?v=Y29SSOS4UOc">Don't Wait For Me! Scalable Concurrency for Ruby 3! by Samuel Williams</a></li>
+<li><a href='https://github.com/socketry/async'>[Gem]Production ready library to start utilizing Fiber in your apps now!</a></li>
+<li><a href="https://github.com/dsh0416/evt">[Gem]Experimental Fiber Schedulers that use production grade I/O event loops</a></li>
+<li><a href="https://www.codeotaku.com/journal/2020-04/ruby-concurrency-final-report/index">[Talk]Overview of the Fiber Scheduler project</a></li>
+<li><a href="https://www.youtube.com/watch?v=qKQcUDEo-ZI">[Talk]Fibers Are the Right Solution by Samuel Williams</a></li>
+
+<p>Enjoy :)</p>
+
+<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length*2+images.length);
+</script>
+<!-- Begin MailChimp Signup Form -->
+<style type="text/css">
+#mce-EMAIL {width: 40%;}
+#mce-EMAIL, #mc-embedded-subscribe {height: 30px; float: left;}
+#mc-embedded-subscribe {width: 100px; border: none; background-color: #ddd;}
+#mc-embedded-subscribe:hover {color: white; background-color: #333;}
+</style>
+<div id="mc_embed_signup">
+<form action="//packmule.us8.list-manage.com/subscribe/post?u=05df9a2a90aaaa22b906c11d9&amp;id=b7c9b7a5e2" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL", placeholder="Email Address">
+<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_05df9a2a90aaaa22b906c11d9_b7c9b7a5e2" tabindex="-1" value=""></div>
+<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+</div>
+</form>
+</div>
+<!--End mc_embed_signup-->
+<br>
+<br>
+<hr>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
+</body>
+</html>
