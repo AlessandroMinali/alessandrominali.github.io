@@ -51,7 +51,7 @@ Reading time: (<span id='time'>~</span> mins)
 
 <p>With the recent release of <a href='https://www.ruby-lang.org/en/news/2020/12/25/ruby-3-0-0-released/'>Ruby 3</a> I was looking forward to playing around with the new concurrency primitive, <a href='https://github.com/ruby/ruby/blob/master/doc/ractor.md'>Ractors</a>. As luck would have it the release notes mentioned another concurrency addition in the release called "Fiber Scheduler". This led me down a wonderful rabbit hole and completely distracted me from ever writing a single line of Ractor code.</p>
 
-<p>Here is a small project of mine that gets a 6x speed up using <a href='https://ruby-doc.org/core-3.0.0/Fiber.html'><i>Fibers</i></a> with a <a href='https://github.com/AlessandroMinali/tv-shows/commit/24b59db56da6610c5dfb700f971f47f6fbf8e020#diff-9747531cb0bbe249cf60b3c4fedeac374dbac949094765776f21242eed24e868'>4 line code change</a>:</p>
+<p>Here is a peek at a project of mine that gets a 6x speed up using <a href='https://ruby-doc.org/core-3.0.0/Fiber.html'><i>Fibers</i></a> with a 4 line code change</a>:</p>
 <pre class='prettyprint'>
 links = {}
 count = 0
