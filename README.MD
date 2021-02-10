@@ -11,5 +11,5 @@ Blog for musings while plugged in
 6. include new item on index page
 7. Update rss
 8. Update top of rss
-8. local check
-9. push to publish
+9. local check
+10. push to publish

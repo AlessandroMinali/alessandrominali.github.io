@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Fri, 22 Jan 2020 15:00:00 +0000</lastBuildDate>
-  <pubDate>Fri, 22 Jan 2020 15:00:00 +0000</pubDate>
+  <lastBuildDate>Tue, Feb 9 2021 15:00:00 +0000</lastBuildDate>
+  <pubDate>Tue, Feb 9 2021 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -138,11 +138,19 @@
   </item>
 
   <item>
-    <title>">Fibers are Amazing (Ruby)</title>
+    <title>Fibers are Amazing (Ruby)</title>
     <description>A discussion of Fibers in the new 3.0 release of ruby.</description>
     <link>https://alessandrominali.github.io/ruby_fibers.html</link>
     <guid isPermaLink="false">techno_babble_17</guid>
-    <pubDate>Fri, 22 Jan 2020 15:00:00 +0000</pubDate>
+    <pubDate>Fri, 22 Jan 2021 15:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>Minimal Music Machine (Bash / Mac OSX)</title>
+    <description>A music player with a small footprint for minimalists.</description>
+    <link>https://alessandrominali.github.io/tiny_music_player.html</link>
+    <guid isPermaLink="false">techno_babble_18</guid>
+    <pubDate>Tue, Feb 9 2021 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
