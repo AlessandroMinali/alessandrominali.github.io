@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Tue, Feb 9 2021 15:00:00 +0000</lastBuildDate>
-  <pubDate>Tue, Feb 9 2021 15:00:00 +0000</pubDate>
+  <lastBuildDate>Sat, 13 Feb 2021 15:00:00 +0000</lastBuildDate>
+  <pubDate>Sat, 13 Feb 2021 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -132,7 +132,7 @@
   <item>
     <title>Explaining a Micro-Framework (Ruby)</title>
     <description>A tutorial series showing you how the web framework rum works.</description>
-    <link>https://alessandrominali.github.io/explain-a-framework.html</link>
+    <link>https://alessandrominali.github.io/explain_a_framework.html</link>
     <guid isPermaLink="false">techno_babble_16</guid>
     <pubDate>Thu, 08 Oct 2020 15:00:00 +0000</pubDate>
   </item>
@@ -151,6 +151,14 @@
     <link>https://alessandrominali.github.io/tiny_music_player.html</link>
     <guid isPermaLink="false">techno_babble_18</guid>
     <pubDate>Tue, Feb 9 2021 15:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>RELEASE: RedditGet (Ruby)</title>
+    <description>Announcement of ruby gem reddit_get.</description>
+    <link>https://alessandrominali.github.io/reddit_get.html</link>
+    <guid isPermaLink="false">techno_babble_19</guid>
+    <pubDate>Sat, 13 Feb 2021 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
