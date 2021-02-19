@@ -25,9 +25,9 @@ pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap
 .prettyprint:not(.linenums){padding: 5px 10px;}
 </style>
 <title>
-Minimal Music Machine (Bash/Mac OSX)
+Customize the Toolbar (Mac OSX/Bash/Ruby)
 </title>
-<meta name="description" content="A music player with a small footprint for minimalists.">
+<meta name="description" content="A guide about custom BitBar plugins">
 </head>
 <body>
 <ul id="nav">
@@ -37,57 +37,66 @@ Minimal Music Machine (Bash/Mac OSX)
 <li><a href="https://packmule.ca/contact/">Contact</a></li>
 </ul>
 <h1>
-Minimal Music Machine (Bash/Mac OSX)
+Customize the Toolbar (Mac OSX/Bash/Ruby)
 </h1>
 <p style='font-weight: bold; text-align: right;'>
-Tue 09 Feb 2021
+Fri 19 Feb 2021
 <br>
 Reading time: (<span id='time'>~</span> mins)
 </p>
 <p>
-I'm always looking for ways to make my life simpler and less cluttered. The latest epiphany I had was to reduce inefficiencies of music playing. I used to exclusively listen to tracks on <a href='https://en.wikipedia.org/wiki/Spotify'>Spotify</a>/<a href='https://en.wikipedia.org/wiki/Youtube'>Youtube</a> but for a number of years now I have gotten "hard" copies of all my music so it is always accessible, as I've grown to appreciate an <a href='https://100r.co/site/working_offgrid_efficiently.html#internet'>offline-first</a> approach. <a href='https://en.wikipedia.org/wiki/VLC_media_player'>VLC</a> was the application I used to play my music but it is overkill, wasting CPU time rendering a GUI and who knows what else when all I want is to power the speakers.
+A few weeks ago I came across a great project called <a href='https://github.com/matryer/bitbar'>BitBar</a>. It allows you to easily display custom scripts on your menu bar. I won't repeat the installation and usage details which you can find <a href='https://github.com/matryer/bitbar#get-started'>here</a>.
 </p>
 
-<p>
-That lead to a short adventure of <a href='https://en.wikipedia.org/wiki/Google_(verb)'>googling</a> how to manually play music on <a href='https://en.wikipedia.org/wiki/OSX_(disambiguation)'>Mac OSX</a>. There are a bunch of open-source projects aimed at creating a minimal music player but I really wanted nothing but audio playing. I don't need an interface of any kind. I have a folder of music, I want it shuffled and pumped out into the air.
-</p>
+<p>My menu bar now:</p>
+<img src='./assets/bitbar.png' />
 
-<p>
-With my luck I avoided having to write my own app as Mac OSX comes with a tiny little toy called <b>afplay</b>. It has a beautiful man page:
-</p>
-<img src="./assets/afplay.png" />
-<p>
-What more could anyone ask for. To turn this into the music player of my dreams all I needed was to alias 4 simple commands in my <i>~/.bash_profile</i> and then I had my own tiny terminal troubadour:
-</p>
-<pre class="prettyprint">
-play(){
-  trap 'murder' 1 3 9 # cleanup when terminal closes
-  SAVEIFS=$IFS
-  IFS=$'\n' # allow for filenames with spaces
-  music=$(find ~/Downloads/stuff/vids | shuf) # shuffle music files
-  for f in $music
-  do
-    afplay "$f" # play the audio
-  done & # background the process
-  IFS=$SAVEIFS
-  clear
-}
+<p>From left to right</p>
+<h4>Currently Playing Music:</h4>
+<pre class='prettyprint'>
+#!bin/bash
 
-# kill the audio player to proceed to the next track
-alias next='killall afplay && clear'
-# stop the background process and all further playing
-alias stop='kill %?afplay && sleep 0.1 && clear'
-# track down and kill everything in sight
-alias murder='kill %?afplay; while killall afplay; do :; done'
+# Show music playing from my custom music program: https://alessandrominali.github.io/tiny_music_player.html
+ps u | grep afplay | grep -v grep | rev | cut -d/ -f1 | cut -d. -f2-10 | rev
 </pre>
 
-<p>And to kick it off:</p>
-<pre class="unix">
-play
+<h4>Total CPU Utilization:</h4>
+<pre class='prettyprint'>
+#!bin/bash
+
+# Usage across all CPUS
+ps -A -o %cpu | awk '{s+=$1} END {print s "%"}'
 </pre>
 
+<h4>Default Battery Charge Indicator...</h4>
+
+<h4>Internet Status:</h4>
+<pre class='prettyprint lang-bash'>
+#!bin/bash
+
+# See internet connectivity status
+ping -o -t 1 google.ca > /dev/null 2>&1
+if [ $? -eq 0 ];
+then
+echo "OK"
+else
+RED='\033[0;31m'
+echo -e "${RED}ERR"
+fi
+</pre>
+
+<h4>Death:</h4>
+<pre class='prettyprint'>
+#!/usr/bin/ruby
+
+# How many Saturdays I have left to live: https://wiki.xxiivv.com/site/death.html
+puts (3_900 - (Time.now - Time.new(1992, 10, 20)) / 604_800).round
+</pre>
+
+<h4>Default Time, Search and Notification Center Icons...</h4>
+
 <p>
-Sitting at ~1% CPU usage, what more can you ask for. Enjoy :)
+I love the simplicity behind BitBar. Enjoy :)
 </p>
 
 <h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>

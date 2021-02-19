@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Thu, 18 Feb 2021 15:00:00 +0000</lastBuildDate>
-  <pubDate>Thu, 18 Feb 2021 15:00:00 +0000</pubDate>
+  <lastBuildDate>Fri, 19 Feb 2021 2021 15:00:00 +0000</lastBuildDate>
+  <pubDate>Fri, 19 Feb 2021 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -146,7 +146,7 @@
   </item>
 
   <item>
-    <title>Minimal Music Machine (Bash / Mac OSX)</title>
+    <title>Minimal Music Machine (Bash/Mac OSX)</title>
     <description>A music player with a small footprint for minimalists.</description>
     <link>https://alessandrominali.github.io/tiny_music_player.html</link>
     <guid isPermaLink="false">techno_babble_18</guid>
@@ -162,11 +162,19 @@
   </item>
 
   <item>
-    <title>How Not To Live (Lifestyle / C)</title>
+    <title>How Not To Live (Lifestyle/C)</title>
     <description>A post about the examined life.</description>
     <link>https://alessandrominali.github.io/death.html</link>
     <guid isPermaLink="false">techno_babble_20</guid>
     <pubDate>Thu, 18 Feb 2021 15:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>Customize the Toolbar (Mac OSX/Bash/Ruby)</title>
+    <description>A guide about custom BitBar plugins.</description>
+    <link>https://alessandrominali.github.io/bitbar_plugins.html</link>
+    <guid isPermaLink="false">techno_babble_21</guid>
+    <pubDate>Fri, 19 Feb 2021 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
