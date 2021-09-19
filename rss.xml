@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Fri, 19 Feb 2021 2021 15:00:00 +0000</lastBuildDate>
-  <pubDate>Fri, 19 Feb 2021 15:00:00 +0000</pubDate>
+  <lastBuildDate>Sun, 19 Sep 2021 15:00:00 +0000</lastBuildDate>
+  <pubDate>Sun, 19 Sep 2021 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -175,6 +175,14 @@
     <link>https://alessandrominali.github.io/bitbar_plugins.html</link>
     <guid isPermaLink="false">techno_babble_21</guid>
     <pubDate>Fri, 19 Feb 2021 15:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>Minimal Captcha (Ruby)</title>
+    <description>A tiny ruby module to block email spammers.</description>
+    <link>https://alessandrominali.github.io/captcha.html</link>
+    <guid isPermaLink="false">techno_babble_22</guid>
+    <pubDate>Sun, 19 Sep 2021 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
