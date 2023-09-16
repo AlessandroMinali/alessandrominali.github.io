@@ -179,7 +179,6 @@ xhr.onreadystatechange = function () {
 <p><a href='https://github.com/AlessandroMinali/snappy/commit/ad62b4de9c2b6002aa49b44bcae752fd3a9c6bfe#diff-fbc20bc0675feb0d9f5919b8c3ba631e'>And some changes to the DOM to have a loading gif until the server responds with content</a>
 </p>
 <p><b>TADA!</b> Snappy is now running...snappily ;) Be sure to dig around the code I linked for these last few steps since I glossed over it. It's barebones AJAX so if you are unsure what is going down, don't be afraid to Google it out.</p>
-<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" /></h3>
 <script>
 var paragraphs = document.getElementsByTagName("p");
 var code = document.getElementsByClassName("prettyprint");
@@ -192,27 +191,15 @@ for(var i = 0; i < paragraphs.length; i++)
 
 display.innerHTML = Math.round(count/250+code.length*2);
 </script>
-<!-- Begin MailChimp Signup Form -->
-<style type="text/css">
-#mce-EMAIL {width: 40%;}
-#mce-EMAIL, #mc-embedded-subscribe {height: 30px; float: left;}
-#mc-embedded-subscribe {width: 100px; border: none; background-color: #ddd;}
-#mc-embedded-subscribe:hover {color: white; background-color: #333;}
-</style>
-<div id="mc_embed_signup">
-<form action="//packmule.us8.list-manage.com/subscribe/post?u=05df9a2a90aaaa22b906c11d9&amp;id=b7c9b7a5e2" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL", placeholder="Email Address">
-<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_05df9a2a90aaaa22b906c11d9_b7c9b7a5e2" tabindex="-1" value=""></div>
-<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-</div>
-</form>
-</div>
-<!--End mc_embed_signup-->
-<br>
-<br>
 <hr>
-<h3>Questions? Free free to <a href="https://packmule.ca/contact/?message=Making an App Asynchronous and More">contact me anytime</a> :)</h3>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
+<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" />
+<form style="display: inline" action="https://tinyletter.com/packmule" method="post" onsubmit="window.open('https://tinyletter.com/packmule', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true" target="popupwindow">
+<input id="tlemail" name="email" placeholder="Your email here" type="text">
+<input name="embed" type="hidden" value="1">
+<input type="submit" value="Subscribe">
+</form>
+</h3>
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
 </body>
 </html>
