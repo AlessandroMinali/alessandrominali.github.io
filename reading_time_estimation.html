@@ -57,7 +57,7 @@ for (var i = 0; i < paragraphs.length; i++) {
 display.innerHTML = Math.round(count/200);	
 </pre>
 <p>
-We simply grab each <b>p</b> tag, split it's content into words by breaking on 'spaces'(" ") and count the total number of 'words'. We divide that by the average speed of 200. Tada! For this page that gives us: <i><span id="time-1">~</span> mins</i>.
+We simply grab each <b>p</b> tag, split it's content into words by breaking on 'spaces'(" ") and count the total number of 'words'. We divide that by the average speed of 200. Tada! For this page that gives us: <i><span id="time_1">~</span> mins</i>.
 </p>
 <p> This gives a pretty rough, but decent estimate. I have an issue though, my blog posts contain plenty of code snippets. Code reading time/comprehension is a beast of a problem, and the numbers for the average there vary widely! So how can I get something that better approximates the time to read a technical blog?</p>
 <p>
@@ -98,15 +98,12 @@ for(var i = 0; i < paragraphs.length; i++)
     count = count + paragraphs[i].innerHTML.split(" ").length;
 }
 display.innerHTML = Math.round(count/250+code.length*2);
+time_1.innerHTML = Math.round(count/200);
 </script>
 <hr>
 <h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
 <h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" />
-<form style="display: inline" action="https://tinyletter.com/packmule" method="post" onsubmit="window.open('https://tinyletter.com/packmule', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true" target="popupwindow">
-<input id="tlemail" name="email" placeholder="Your email here" type="text">
-<input name="embed" type="hidden" value="1">
-<input type="submit" value="Subscribe">
-</form>
+
 </h3>
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
 </body>
