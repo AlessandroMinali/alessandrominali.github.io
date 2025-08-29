@@ -1,0 +1,235 @@
+<html>
+<head>
+<link rel="alternate" type="application/rss+xml" title="Alessandro Minali's Babble" href="https://alessandrominali.github.io/rss.xml" />
+<style>
+body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
+@media screen and (max-width: 1200px) {body {width: 75%;}}
+@media screen and (max-width: 1000px) {body {width: 85%;}}
+@media screen and (max-width: 800px) {body {width: 95%;}}
+h1 {text-align: center; font-size: 2em; margin-top: 50px;}
+h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
+p {text-align: justify; font-size: 1em;}
+dl {margin: 50px 50px 20px 50px; padding: 0;}
+dt {font-weight: bold; float: left; width: 30%; padding: 0; margin: 0;}
+dd {padding-left: 23%;}
+a {text-decoration: underline; font-weight: normal; color: #555555;}
+a:hover {color: white; background-color: #333}
+ul {list-style-type: none; display: block; height: 1em; text-align: center; margin: 25px 0px; padding: 0; clear: both;}
+#nav>li {display: inline; padding: 0px 20px; font-weight: bold;}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aaa; list-style-type: decimal !important;}
+.unix, b, i {background-color: #eee}
+.unix::before {content: '$ ';}
+.unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
+.log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
+pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
+.prettyprint:not(.linenums){padding: 5px 10px;}
+</style>
+<title>
+Data-Oriented Design: Canonical Example (C)
+</title>
+<meta name="description" content="A walkthrough of CppCon 2014: Mike Acton Data-Oriented Design and C++">
+</head>
+<body>
+<ul id="nav">
+<li><a href="/">More Babble</a></li>
+<li></li>
+<li></li>
+<li><a href="https://packmule.ca/contact/">Contact</a></li>
+</ul>
+<h1>
+Data-Oriented Design: Canonical Example (C)
+</h1>
+<p style='font-weight: bold; text-align: right;'>
+Fri 29 Aug 2025
+<br>
+Reading time: (<span id='time'>~</span> mins)
+</p>
+
+<p>My data-oriented journey started with <a href="https://youtu.be/rX0ItVEVjHc" target="_blank">Mike Acton's lecture at CPPCon back in 2014</a>. I've re-watched this video many times and have had different levels of following along and understanding. And I thought it would be finally great to have a deep dive full explanation of everything that Mike may take for granted as he's explaining and re-explaining parts of his process.</p>
+
+<p>This post will be taking <a href="https://youtu.be/rX0ItVEVjHc?t=1919" target="_blank">the example at minute 32 of the video</a> and going basically moment by moment of Mike's explanation</p>
+
+<hr>
+
+<p>Here is the code that we will be looking at. It's a simple object and it's update function. Mike has just finished explaining how cache misses are the slowest part of any data processing, and so reducing them is extremely important. Looking at this game object it has a mixture of information related to where it's located, how it would be possibly rendered, its name, and some extraneous value foo.</p>
+<pre class="prettyprint">
+#include &lt;math.h&gt;
+
+typedef struct
+{
+  float m_Pos[2]; 
+  float m_Velocity[2];
+  char m_Name[32];
+  float Model[34];
+  float m_Foo;
+} GameObject;
+
+void UpdateFoo(GameObject *g, float f)
+{
+  float mag = sqrtf(
+    g->m_Velocity[0] * g->m_Velocity[0] +
+    g->m_Velocity[1] * g->m_Velocity[1]);
+  g->m_Foo += mag * f;
+}    
+</pre>
+
+<p>Here is a layout of the structure in memory and the spacing between each component:</p>
+<pre class="prettyprint">
+// Note: float is 4bytes, char is 1byte
+
+typedef struct
+{
+  float m_Pos[2];       // 0,   4b*2
+  float m_Velocity[2];  // 8,   4b*2
+  char m_Name[32];      // 16,  1b*32
+  float Model[34];      // 48,  4b*34
+  float m_Foo;          // 184, 4b
+} GameObject;           // 188b total size per object
+</pre>
+<p>The main issue here is that we can see that in <b>UpdateFoo</b>, we're only using <b>m_Velocity</b> and <b>m_Foo</b> but the large structure contains unneeded data for the transformation. The cache line will be filled up with data that will never be used and so we will continually be making cache line requests. Note: we'll assume cache lines are 64 bytes.</p>
+<p>We can see that <b>m_Velocity</b> and <b>m_Foo</b> are over one cache line away from each other (>64bytes apart). Some quick maths on our cache line usage: 8b for <b>m_Velocity</b> and 4b for <b>m_Foo</b> and we read in two separate cache lines which is 64b*2. So <i>1-(8+4)/(64*2) = 90%</i> of our cache lines is wasted!</p>
+
+<p>We can also do an analysis of the data transformation and count where are we wasting cycle time. Mike provides the value of ~200cycles for waiting on a cache miss(first time a new value is loaded from memory). We'll estimate each arithmetic operation to take ~6cycles, with the square root being "more expensive" at ~10cycles. Note: These values are for not true to life and modern processors can usually have multiple arithmetic operations happening at the same time.</p>
+<pre class="prettyprint">
+void UpdateFoo(GameObject *g, float f)
+{
+  float mag = sqrtf(                        // sqrt     +10
+    g->m_Velocity[0] * g->m_Velocity[0] +   // mul, add +6+6
+    g->m_Velocity[1] * g->m_Velocity[1]);   // mul      +6
+  g->m_Foo += mag * f;                      // mul, add +6+6
+}                                           // total    ~40cycles
+</pre>
+<p>So that's pretty fast at 40 cycles, but we can't forget that anytime we are using values from memory, we have to pay the cost of fetching them:</p>
+<pre class="prettyprint">
+void UpdateFoo(GameObject *g, float f)
+{
+  float mag = sqrtf(
+    g->m_Velocity[0] * g->m_Velocity[0] +   // load m_Velocity[0],  200cycles
+    g->m_Velocity[1] * g->m_Velocity[1]);   // load m_Velocity[1],  0cycles, <64b away
+  g->m_Foo += mag * f;                      // load/store m_Foo,    200cycles, >64b away
+}                                           // total                ~400cycles
+</pre>
+<p>That means we can expect 440cycles per call of <b>UpdateFoo</b> and waiting for memory is <i>400/440 = ~90%</i> of the time of our execution!</p>
+<p>The data-oriented approach here is to bring the data that is useful/used together, together.</p>
+<pre class="prettyprint">
+#include &lt;stddef.h&gt;
+#include &lt;math.h&gt;
+
+typedef struct {
+  float m_Velocity[2];
+  float m_Foo;
+} FooUpdateIn;
+
+typedef struct {
+  float m_Foo;
+} FooUpdateOut;
+
+void UpdateFoos(const FooUpdateIn* in, size_t count, FooUpdateOut* out, float f)
+{
+  for (size_t i = 0; i < count; ++i) {
+    float mag = sqrtf(
+      in[i].m_Velocity[0] * in[i].m_Velocity[0] +
+      in[i].m_Velocity[1] * in[i].m_Velocity[1]);
+    out[i].m_Foo = in[i].m_Foo + mag * f;
+  }
+}
+</pre>
+<p>Let's run the same analysis we ran before on this new code, starting with the structure layout:</p>
+<pre class="prettyprint">
+// Note: old structure was 188b!
+
+typedef struct {
+  float m_Velocity[2];  // 0, 4b*2
+  float m_Foo;          // 8, 4b
+} FooUpdateIn;          // 12b total size per object
+
+typedef struct {
+  float m_Foo;          // 0, 4b
+} FooUpdateOut;         // 4b total size per object
+</pre>
+<p>We went from 188 bytes down to 12 bytes for processing, a 94% memory footprint reduction!</p>
+<p>Notice that our update function also didn't change. It's doing the same work, but instead of pretending like only one object exists at once, it operates on all the objects together, making use of our now tightly packed memory. When we load velocity or foo from memory, we aren't accidentally also pulling in model or name information that is just taking up space. Instead, by fitting more velocity and foo values into each cache line we have more information to process in sequence before needing to call for a new cache line.</p>
+<p>Now we have no wastage and instead we only wait for cache every ~5.33loops(64b per cache/12b per struct per loop). We went from two cache reads per iteration to on average no cache reads so we only consider the time for arithmetic as our cycle count: <i>440cycles/40cycles = 11x</i> speedup!</p>
+<p>For a slightly more realistic expectation of speedup we can calculate by taking account the occasional cache misses: <i>40cycles + 200cycles/5.33= ~77cycles</i> on average so <i>440/77 = ~5.7x</i> speedup. In another lecture Mike reports a speedup of 6.8x which is within an order of magnitude and between our two predictions based solely on analysis.</p>
+
+<h2>Epilogue</h2>
+<p>Hopefully it makes sense that the idea of reducing your data structure size and reducing the amount of times you have to bring new information into cache will significantly improve your programs speed. The analysis provided in this blog post versus what Mike does in his lecture differs in that we avoid looking at the hardware. Mike is famous for saying that <i>Software is <b>NOT</b> the Platform</i>. <i><b>Hardware</b> is the Platform</i>. Different hardware will require different solutions. And in this case, the example is fairly simple so looking at just the code, we can generate a decent mental model. To be rigorous that means looking at what the computer will execute, which is the assembly output of your program.</p>
+<p>I will provide the assembly output for the old code and the new code as well as commenting out what each line does. In general, you don't really have to learn how to read every single type of assembly, but you should have a general ability to look at it and to discern what is happening. It will make your analysis accurate to the hardware level! </p>
+<p>I generated this assembly output from using godbolt.org, an online compiler explorer. Feel free to play around with it. <a href="https://godbolt.org/z/s7Ma6TWjn" target="_blank">https://godbolt.org/z/s7Ma6TWjn</a> and <a href="https://godbolt.org/z/nWPheEqTf" target="_blank">https://godbolt.org/z/nWPheEqTf</a>.</p>
+<p>Old:</p>
+<pre class="prettyprint">
+UpdateFoo:
+        movaps  xmm2, xmm0                  // setup f
+        movss   xmm1, DWORD PTR [rdi+12]    // a = load m_Velocity[1], cache miss
+        movss   xmm0, DWORD PTR [rdi+8]     // b = load m_Velocity[0], same cache line as above
+        mulss   xmm1, xmm1                  // a = a * a
+        mulss   xmm0, xmm0                  // b = b * b
+        addss   xmm0, xmm1                  // b = b + a
+        sqrtss  xmm0, xmm0                  // b = sqrt(b)
+        mulss   xmm0, xmm2                  // b = b * f
+        addss   xmm0, DWORD PTR [rdi+184]   // b = b + load m_Foo, cache miss since >64b away
+        movss   DWORD PTR [rdi+184], xmm0   // m_Foo = b
+        ret    
+</pre>
+<p>New:</p>
+<pre class="prettyprint">
+UpdateFoos:
+        movaps  xmm2, xmm0                  // setup f
+        test    rsi, rsi                    // zf = count == 0
+        je      .L1                         // jump to .L1 if zf
+        lea     rax, [rdx+rsi*4]            // setup count
+.L3:
+        movss   xmm0, DWORD PTR [rdi]       // a = load in[i].m_Velocity[0], cache miss every 5.33 loops
+        movss   xmm1, DWORD PTR [rdi+4]     // b = load in[i].m_Velocity[1], same cache line
+        add     rdx, 4                      // i++
+        add     rdi, 12                     // out++
+        mulss   xmm0, xmm0                  // a = a * a
+        mulss   xmm1, xmm1                  // b = b * b
+        addss   xmm0, xmm1                  // a = a + b
+        sqrtss  xmm0, xmm0                  // a = sqrt(a)
+        mulss   xmm0, xmm2                  // a = a * f
+        addss   xmm0, DWORD PTR [rdi-4]     // a = a + load in[i-1].m_Foo, same cache line
+        movss   DWORD PTR [rdx-4], xmm0     // load out[i-1].m_Foo = a, cache miss every 16 loops
+        cmp     rax, rdx                    // zf = i == count
+        jne     .L3                         // jump to .L3 if !zf
+.L1:
+        ret
+</pre>
+<p>From the assembly, you can clearly and immediately see where arithmetic and memory accesses occur. And you can reason about them a lot quicker versus code can often obfuscate that via syntax. What's even more interesting to note is that the new version actually has more memory reads. But ultimately, since we are hitting the cache more often, we still come out ahead. Looking at how you process your data, how you can make it more compact and only request what you need is what should be focused on for data-oriented design!</p>
+
+<p>Note: Via the assembly we can also see why we wouldn't expect to get the full ~11x speedup. We are doing more work(branching/loop maintenance), but still ~7x is a significant speedup for just paying attention to the data.</p>
+
+<h2>Extra: The Naive Attempt</h2>
+<p>If the original problem seemed that our values were too far away in the data structure, then the first simple fix might feel like all we have to do is just move <b>m_Foo</b> closer to <b>m_Velocity</b>.</p>
+<pre class="prettyprint">
+typedef struct
+{
+  float m_Pos[2];       // 0,  4b*2
+  float m_Velocity[2];  // 8,  4b*2 /*
+  float m_Foo;          // 16, 4b   /*
+  char m_Name[32];      // 20, 1b*32
+  float Model[34];      // 52, 4b*34
+} GameObject;           // 188b total size per object
+</pre>
+<p>Let's do a quick analysis on wasted cache space with this change: <i>1-(8.0+4)/(64) = ~80%</i> cache line wasted. A quick cycle analysis: <i>200/240 = ~83%</i> cycles wasted waiting for memory. In comparison to <b>ZERO</b> cache line waste and waiting for memory maybe once every ~5 loops, this solution seems very weak. Again, data-oriented design isn't just about removing cache misses or looking at memory. It's about looking at the data! There are so many elements here that are not useful to the data transformation we are doing, so they should be removed. Transform the data you need in a meaningful way, nothing more, nothing less.</p>
+
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length*2+images.length);
+</script>
+<hr>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
+<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" />
+
+</h3>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
+</body>
+</html>

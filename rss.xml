@@ -6,8 +6,8 @@
   <title>Techno Babble (Alessandro Minali)</title>
   <description>Technical blog exploring topics of programming, code architecture and project design.</description>
   <link>https://alessandrominali.github.io</link>
-  <lastBuildDate>Fri, 21 Oct 2022 15:00:00 +0000</lastBuildDate>
-  <pubDate>Fri, 21 Oct 2022 15:00:00 +0000</pubDate>
+  <lastBuildDate>Fri, 29 Aug 2025 15:00:00 +0000</lastBuildDate>
+  <pubDate>Fri, 29 Aug 2025 15:00:00 +0000</pubDate>
 
   <item>
     <title>Tweet for Twitch</title>
@@ -191,6 +191,14 @@
     <link>https://alessandrominali.github.io/5e_as_osr.html</link>
     <guid isPermaLink="false">techno_babble_23</guid>
     <pubDate>Fri, 21 Oct 2022 15:00:00 +0000</pubDate>
+  </item>
+
+  <item>
+    <title>Data-Oriented Design: Canonical Example (C)</title>
+    <description>A walkthrough of CppCon 2014: Mike Acton Data-Oriented Design and C++</description>
+    <link>https://alessandrominali.github.io/data_oriented_design_canonical_example.html</link>
+    <guid isPermaLink="false">techno_babble_24</guid>
+    <pubDate>Fri, 29 Aug 2025 15:00:00 +0000</pubDate>
   </item>
 </channel>
 </rss>
