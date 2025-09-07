@@ -86,7 +86,7 @@ typedef struct
   float m_Foo;          // 184, 4b
 } GameObject;           // 188b total size per object
 </pre>
-<p>The main issue here is that we can see that in <b>UpdateFoo</b>, we're only using <b>m_Velocity</b> and <b>m_Foo</b> but the large structure contains unneeded data for the transformation. The cache line will be filled up with data that will never be used and so we will continually be making cache line requests. Note: we'll assume cache lines are 64 bytes.</p>
+<p>The main issue here is that we can see that in <b>UpdateFoo</b>, we're only using <b>m_Velocity</b> and <b>m_Foo</b> but the large structure contains unneeded data for the transformation. The cache line will be filled up with data that will never be used and so we will continually be have cache misses(each iteration won't have it's data in cache so we spend time waiting for it to be loaded, which is slow!). Note: we'll assume cache lines are 64 bytes.</p>
 <p>We can see that <b>m_Velocity</b> and <b>m_Foo</b> are over one cache line away from each other (>64bytes apart). Some quick maths on our cache line usage: 8b for <b>m_Velocity</b> and 4b for <b>m_Foo</b> and we read in two separate cache lines which is 64b*2. So <i>1-(8+4)/(64*2) = 90%</i> of our cache lines is wasted!</p>
 
 <p>We can also do an analysis of the data transformation and count where are we wasting cycle time. Mike provides the value of ~200cycles for waiting on a cache miss(first time a new value is loaded from memory). We'll estimate each arithmetic operation to take ~6cycles, with the square root being "more expensive" at ~10cycles. Note: These values are for not true to life and modern processors can usually have multiple arithmetic operations happening at the same time.</p>
