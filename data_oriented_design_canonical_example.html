@@ -211,7 +211,7 @@ typedef struct
   float Model[34];      // 52, 4b*34
 } GameObject;           // 188b total size per object
 </pre>
-<p>Let's do a quick analysis on wasted cache space with this change: <i>1-(8.0+4)/(64) = ~80%</i> cache line wasted. A quick cycle analysis: <i>200/240 = ~83%</i> cycles wasted waiting for memory. In comparison to <b>ZERO</b> cache line waste and waiting for memory maybe once every ~5 loops, this solution seems very weak. Again, data-oriented design isn't just about removing cache misses or looking at memory. It's about looking at the data! There are so many elements here that are not useful to the data transformation we are doing, so they should be removed. Transform the data you need in a meaningful way, nothing more, nothing less.</p>
+<p>Let's do a quick analysis on wasted cache space with this change: <i>1-(8.0+4)/(64) = ~80%</i> cache line wasted. A quick cycle analysis: <i>200/240 = ~83%</i> cycles wasted waiting for memory. In comparison to <b>ZERO</b> cache line waste and waiting for memory maybe once every ~5 loops, this solution seems very weak. Again, data-oriented design isn't just about removing cache misses or looking at memory. It's about looking at the data! There are so many elements here that are not useful to the data transformation we are doing, so we should organize and exclude from the data transformation function. Transform the data you need in a meaningful way, nothing more, nothing less.</p>
 
 <script>
 var paragraphs = document.getElementsByTagName("p");
