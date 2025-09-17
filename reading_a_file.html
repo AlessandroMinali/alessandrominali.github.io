@@ -130,7 +130,7 @@ int main(void)
 } 
 </pre>
 </li>
-<li>I will run each test with this command: <i><code>sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out</code></i> to allow compiler optimizations and ensure that before each run we force disk cache to be purged (flushed and emptied). Will take the highest of ten runs.</li>
+<li>I will run each test with this command: <i><code>sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out</code></i> to allow compiler optimizations and ensure that before each run we force disk cache to be purged (flushed and emptied). Final score will be the highest of ten runs.</li>
 <h2 id="fread">Using <i>fread</i></h2>
 <pre class="prettyprint">
 #include &lt;stdlib.h&gt;
@@ -223,7 +223,7 @@ Touch all bytes: 22.475 seconds (0.61 GB/s), sum=1000000000
 1000000000
        79.11 real        76.13 user         2.82 sys
 </pre>
-<p>Does not return in a reasonable time when using <i>File#readlines</i></p>
+<p>Does not return in a reasonable time when using <i>File#readlines</i>.</p>
 <h2 id="dd">Using command-line <i>dd</i></h2>
 <pre>
 % sudo purge && /bin/dd if=measurements.txt of=/dev/null bs=1M
@@ -231,7 +231,7 @@ Touch all bytes: 22.475 seconds (0.61 GB/s), sum=1000000000
 13156+1 records out
 13795429575 bytes transferred in 2.103454 secs (6558465065 bytes/sec)
 </pre>
-<p>This is a sanity check to see how fast our ssd can just raw read</p>
+<p>This is a sanity check to see how fast our ssd can just raw read.</p>
 <h2 id="results">Results</h2>
 <table style="margin: 0 auto">
     <thead>
@@ -254,7 +254,8 @@ Touch all bytes: 22.475 seconds (0.61 GB/s), sum=1000000000
         </tr>
         <tr>
             <th>mmap(2)</th>
-            <td colspan=2>0.61</td>
+            <td>-</td>
+            <td>0.61</td>
         </tr>
         <tr>
             <th>wc(1)</th>
