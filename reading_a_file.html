@@ -1,0 +1,327 @@
+<html>
+<head>
+<link rel="alternate" type="application/rss+xml" title="Alessandro Minali's Babble" href="https://alessandrominali.github.io/rss.xml" />
+<style>
+body {width: 60%; margin-left: auto; margin-right: auto; font-family: "Courier New", Courier, monospace; color: #555555}
+@media screen and (max-width: 1200px) {body {width: 75%;}}
+@media screen and (max-width: 1000px) {body {width: 85%;}}
+@media screen and (max-width: 800px) {body {width: 95%;}}
+h1 {text-align: center; font-size: 2em; margin-top: 50px;}
+h2 {text-align: center; font-size: 1.5em; margin-top: 50px;}
+p {text-align: justify; font-size: 1em;}
+dl {margin: 50px 50px 20px 50px; padding: 0;}
+dt {font-weight: bold; float: left; width: 30%; padding: 0; margin: 0;}
+dd {padding-left: 23%;}
+a {text-decoration: underline; font-weight: normal; color: #555555;}
+a:hover {color: white; background-color: #333}
+ul {list-style-type: none; display: block; height: 1em; text-align: center; margin: 25px 0px; padding: 0; clear: both;}
+#nav>li {display: inline; padding: 0px 20px; font-weight: bold;}
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {color: #aaa; list-style-type: decimal !important;}
+.unix, b, i {background-color: #eee}
+.unix::before {content: '$ ';}
+.unix {margin: 0px 20px; padding: 0px 5px; display: inline;}
+.log{background-color: #eee; margin: 0px 20px; padding: 0px 5px; display: inline-block;}
+pre {overflow-wrap: break-word; white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;}
+.prettyprint:not(.linenums){padding: 5px 10px;}
+td{padding: 3px}
+</style>
+<title>
+How fast can you read a file (C)
+</title>
+<meta name="description" content="A experiment to find out how fast can we read a file in C.">
+</head>
+<body>
+<ul id="nav">
+<li><a href="/">More Babble</a></li>
+<li></li>
+<li></li>
+<li><a href="https://packmule.ca/contact/">Contact</a></li>
+</ul>
+<h1>
+How fast can you read a file (C)
+</h1>
+<p style='font-weight: bold; text-align: right;'>
+Tue 16 Sep 2025
+<br>
+Reading time: (<span id='time'>~</span> mins)
+</p>
+
+<p>This should be an easy question to answer, right? It's a fun little adventure on my Apple M3 Pro that I fell into while watching some videos about the <a href="https://www.youtube.com/watch?v=n-YK3B4_xPA" target="_blank">1 billion row challenge</a>.</p>
+<p>A quick google of this provides conflicting answers. Lots of people saying <i>read</i> is faster than <i>fread</i> or that you should just use <i>mmap</i>. Just as many people saying <a href="https://news.ycombinator.com/item?id=19805675" target="
+    _blank">memory mapping is not great</a> due to page faults. Even a source I consider very reputable provides <a href="https://lemire.me/blog/2012/06/26/which-is-fastest-read-fread-ifstream-or-mmap/" target="_blank">values that do not match up</a> to my experience. Why is such a simple question so hard to get an answer for?</p>
+<h3>Table of Contents</h3>
+<ol>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#fread">fread</a></li>
+    <li><a href="#read">read</a></li>
+    <li><a href="#mmap">mmap</a></li>
+    <li><a href="#wc">wc</a></li>
+    <li><a href="#ruby">ruby</a></li>
+    <li><a href="#dd">dd</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#epilogue">Epilogue</a></li>
+</ol>
+<h2 id="setup">Setup</h2>
+<ol>
+<li>
+    I will be testing on my laptop: Apple M3 Pro 1TB SSD, 36GB RAM, macOS 15.2 (24C101).
+</li>
+<li>I will be reading a ~14GB file with 1billion lines as produced by the <a href="https://github.com/gunnarmorling/1brc?tab=readme-ov-file#running-the-challenge" target="_blank">1brc repo</a> that looks like:
+<pre class="prettyprint">
+Nuuk;12.4
+Yellowknife;15.4
+Vladivostok;14.3
+Indianapolis;7.8
+Belize City;19.2
+Kunming;14.4
+...    
+</pre>
+</li>
+<li>
+    I will be using the following test harness to read the file into memory and touch every byte to count lines:
+<pre class="prettyprint">
+#include &lt;stdio.h&gt;
+#include &lt;mach/mach_time.h&gt;
+#define TIMER_SETUP mach_timebase_info_data_t _timebase; \
+                    mach_timebase_info(&_timebase); \
+                    uint64_t _timer_start; \
+                    uint64_t _timer_end; \
+                    char _done
+#define TIMER for(_done = 0, _timer_start = mach_absolute_time(); !_done; _timer_end = mach_absolute_time(), _done = 1)
+#define TIMER_NSEC ((_timer_end - _timer_start) * _timebase.numer / _timebase.denom)
+#define TIMER_SEC (TIMER_NSEC / 1e9)
+#define GB_SEC(bytes) ((bytes / 1e9) / TIMER_SEC)
+
+typedef struct {
+  uint8_t *str;
+  int64_t len;
+} String;
+
+String function()
+{
+    String result;
+    //
+    // implementation we are testing goes here
+    //
+    return result;
+}
+
+int main(void)
+{
+  TIMER_SETUP;
+
+  String file_data;
+  TIMER {
+    file_data = function();
+  }
+  printf("Read %lld bytes in %.3f seconds (%.2f GB/s)\n",
+         file_data.len, TIMER_SEC, GB_SEC(file_data.len));
+
+  uint32_t sum = 0;
+  TIMER {
+    for (int64_t i = 0; i < file_data.len; i++) {
+      if (file_data.str[i] == '\n') ++sum;
+    }
+  }
+  printf("Touch all bytes: %.3f seconds (%.2f GB/s), sum=%d\n",
+         TIMER_SEC, GB_SEC(file_data.len), sum);
+
+  return 0;
+} 
+</pre>
+</li>
+<li>I will run each test with this command: <i><code>sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out</code></i> to allow compiler optimizations and ensure that before each run we force disk cache to be purged (flushed and emptied). Will take the highest of ten runs.</li>
+<h2 id="fread">Using <i>fread</i></h2>
+<pre class="prettyprint">
+#include &lt;stdlib.h&gt;
+String function()
+{
+  String result;
+
+  FILE* file;
+  file = fopen("measurements.txt", "rb");
+  fseek(file, 0, SEEK_END);
+  result.len = ftell(file);
+  fseek(file, 0, SEEK_SET);
+  result.str = malloc(result.len + 1);
+  fread(result.str, result.len, 1, file);
+  result.str[result.len] = 0;
+
+  return result;
+}
+</pre>
+Result:
+<pre>
+% sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out
+Read 13795429575 bytes in 2.113 seconds (6.53 GB/s)
+Touch all bytes: 0.853 seconds (16.18 GB/s), sum=1000000000
+</pre>
+<p>Using <i>setvbuf</i> with large, small or no buffer has no tangible effect on result despite advice online stating otherwise.</p>
+<h2 id="read">Using <i>read</i></h2>
+<pre class="prettyprint">
+#include &lt;fcntl.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+String function()
+{
+  String result;
+
+  int fd = open("measurements.txt", O_RDONLY);
+  result.len = lseek(fd, 0, SEEK_END);
+  lseek(fd, 0, SEEK_SET);
+  result.str = malloc(result.len + 1);
+  uint64_t bytes = 0;
+  while(bytes < result.len) {
+    bytes += read(fd, result.str + bytes, INT_MAX); // largest size we can read
+  }
+  result.str[result.len] = 0;
+
+  return result;
+}
+</pre>
+Result:
+<pre>
+% sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out
+Read 13795429575 bytes in 2.107 seconds (6.55 GB/s)
+Touch all bytes: 0.860 seconds (16.03 GB/s), sum=1000000000
+</pre>
+<p>Using <i>fcntl(fd, F_NOCACHE, 1)</i> and/or <i>fcntl(fd, F_RDADVISE, &ra)</i> makes it slower despite advice online stating otherwise.</p></p>
+<h2 id="mmap">Using <i>mmap</i></h2>
+<pre class="prettyprint">
+#include &lt;fcntl.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/mman.h&gt;
+#include &lt;unistd.h&gt;
+String function()
+{
+  String result;
+
+  int fd = open("measurements.txt", O_RDONLY);
+  result.len = lseek(fd, 0, SEEK_END);
+  lseek(fd, 0, SEEK_SET);
+  result.str = mmap(NULL, result.len, PROT_READ, MAP_PRIVATE, fd, 0);
+
+  return result;
+}
+</pre>
+Result:
+<pre>
+% sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out
+Read 13795429575 bytes in 0.000 seconds (759409.31 GB/s)
+Touch all bytes: 22.475 seconds (0.61 GB/s), sum=1000000000  
+</pre>
+<p><i>madvise</i> flags have no significant impact. <i>mmap</i> is not "reading" anything and so it trips over itself with tons of page faults(~842008 faults * 16K pages == file size). Apple specifically states that <a href="https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemAdvancedPT/MappingFilesIntoMemory/MappingFilesIntoMemory.html#//apple_ref/doc/uid/TP40010765-CH2-SW1">reading a file via mapping</a> is bad. Maybe it's better on Linux with the magic flag <i>MAP_POPULATE</i> I see mentioned.</p>
+<h2 id="wc">Using command-line <i>wc</i></h2>
+<pre>
+% sudo purge && /usr/bin/time wc -l measurements.txt
+ 1000000000 measurements.txt
+       11.41 real        10.36 user         1.04 sys
+</pre>
+<h2 id="ruby">Using <i>ruby</i></h2>
+<pre>
+% sudo purge && /usr/bin/time ruby -e 'x = 0; File.foreach("measurements.txt") {|i| x+=1}; puts x'
+1000000000
+       79.11 real        76.13 user         2.82 sys
+</pre>
+<p>Does not return in a reasonable time when using <i>File#readlines</i></p>
+<h2 id="dd">Using command-line <i>dd</i></h2>
+<pre>
+% sudo purge && /bin/dd if=measurements.txt of=/dev/null bs=1M
+13156+1 records in
+13156+1 records out
+13795429575 bytes transferred in 2.103454 secs (6558465065 bytes/sec)
+</pre>
+<p>This is a sanity check to see how fast our ssd can just raw read</p>
+<h2 id="results">Results</h2>
+<table style="margin: 0 auto">
+    <thead>
+        <tr>
+            <th></th>
+            <th>file to memory<br>(GB/s)</th>
+            <th>touch bytes<br>(GB/s)</th>
+        </tr>
+    </thead>
+    <tbody style="text-align: center; background-color: #eee;">
+        <tr>
+            <th>read(2)</th>
+            <td>~6.5</td>
+            <td>~16</td>
+        </tr>
+        <tr>
+            <th>fread(3)</th>
+            <td>~6.5</td>
+            <td>~16</td>
+        </tr>
+        <tr>
+            <th>mmap(2)</th>
+            <td colspan=2>0.61</td>
+        </tr>
+        <tr>
+            <th>wc(1)</th>
+            <td colspan=2>1.21</td>
+        </tr>
+        <tr>
+            <th>ruby(1)</th>
+            <td colspan=2>0.17</td>
+        </tr>
+        <tr>
+            <th>dd(1)</th>
+            <td>6.56</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+<p style="text-align: center;"><small>Higher is better</small></p>
+<p>So what do we take away from this? At least on my laptop the choice is obvious, use <i>fread</i> if you aren't doing anything fancy. It needs the least twiddling and does everything for you while giving you max speed.</p>
+
+<h2 id="epilogue">Epilogue</h2>
+<ol>
+    <li>
+        A single change can make the "touch bytes" part of our test 2x slower!
+<pre class="prettyprint">
+  uint64_t sum = 0; // was originally uint32_t
+  TIMER {
+    for (int64_t i = 0; i < file_data.len; i++) {
+      if (file_data.str[i] == '\n') ++sum;
+    }
+  }
+  printf("Touch all bytes: %.3f seconds (%.2f GB/s), sum=%d\n",
+         TIMER_SEC, GB_SEC(file_data.len), sum);
+</pre>
+<pre>
+% sudo purge && gcc -O3 -std=c99 -march=native brc.c && ./a.out
+Read 13795429575 bytes in 2.114 seconds (6.52 GB/s)
+Touch all bytes: 1.673 seconds (8.25 GB/s), sum=1000000000 <span style="color: red">-! was 16 GB/s before !-</span>
+</pre>
+<p>A brief look at the assembly generated by the compiler does a much more complicated handling of the value despite the computer being a 64-bit machine. I don't know enough to explain why it isn't optimized away. Another reminder that the compiler is not magic!</p>
+    </li>
+    <li>
+        Running off battery slows everything down!
+<pre>
+% sudo purge && gcc -O3 -std=c99 -march=native test.c && ./a.out
+Read 13795429575 bytes in 3.533 seconds (3.90 GB/s) <span style="color: red">-! about 1.5x slower !-</span>
+Touch all bytes: 1.291 seconds (10.69 GB/s), sum=1000000000 <span style="color: red">-! also 1.5x slower !-</span>
+</pre>
+    </li>
+</ol>
+
+<script>
+var paragraphs = document.getElementsByTagName("p");
+var code = document.getElementsByClassName("prettyprint");
+var images = document.getElementsByTagName("img");
+var display = document.getElementById("time");
+var count = 0;
+for(var i = 0; i < paragraphs.length; i++)
+{
+    count = count + paragraphs[i].innerHTML.split(" ").length;
+}
+display.innerHTML = Math.round(count/250+code.length*2+images.length);
+</script>
+<hr>
+<h3>Questions? Free free to <a href="https://packmule.ca/contact/">contact me anytime</a> :)</h3>
+<h3>Get Notified of Future Posts <img style="vertical-align: middle" src="./assets/feed.svg" onclick="window.location='feed:https://alessandrominali.github.io/rss.xml'" />
+
+</h3>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=desert"></script>
+</body>
+</html>
