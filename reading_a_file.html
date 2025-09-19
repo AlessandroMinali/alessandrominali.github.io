@@ -211,7 +211,7 @@ Result:
 Read 13795429575 bytes in 0.000 seconds (759409.31 GB/s)
 Touch all bytes: 22.475 seconds (0.61 GB/s), sum=1000000000  
 </pre>
-<p><i>madvise</i> flags have no significant impact. <i>mmap</i> is not "reading" anything and so it trips over itself with tons of page faults(~842008 faults * 16K pages == file size). Apple specifically states that <a href="https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemAdvancedPT/MappingFilesIntoMemory/MappingFilesIntoMemory.html#//apple_ref/doc/uid/TP40010765-CH2-SW1">reading a file via mapping</a> is bad. Maybe it's better on Linux with the magic flag <i>MAP_POPULATE</i> I see mentioned.</p>
+<p><i>madvise</i> flags have no significant impact. <i>mmap</i> is not "reading" anything and so it trips over itself with tons of page faults(~842008 faults * 16K pages == file size). Apple specifically states that <a href="https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemAdvancedPT/MappingFilesIntoMemory/MappingFilesIntoMemory.html#//apple_ref/doc/uid/TP40010765-CH2-SW1" target="_blank">reading a file via mapping</a> is bad. Maybe it's better on Linux with the magic flag <i>MAP_POPULATE</i> I see mentioned.</p>
 <h2 id="wc">Using command-line <i>wc</i></h2>
 <pre>
 % sudo purge && /usr/bin/time wc -l measurements.txt
